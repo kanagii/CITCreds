@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canteen System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F5F2EB; --surface: #FFFFFF; --surface2: #EDEAE1;
+  --ink: #1A1915; --ink2: #6B6860; --ink3: #A09D97;
+  --accent: #D85A30; --accent-light: #FAECE7; --accent-dark: #993C1D;
+  --green: #3B6D11; --green-light: #EAF3DE;
+  --blue: #185FA5; --blue-light: #E6F1FB;
+  --amber: #854F0B; --amber-light: #FAEEDA;
+  --red: #A32D2D; --red-light: #FCEBEB;
+  --border: rgba(26,25,21,0.12); --border2: rgba(26,25,21,0.06);
+  --radius: 12px; --radius-sm: 8px;
+  --mono: 'DM Mono', monospace; --display: 'Syne', sans-serif;
+}
+body { font-family: var(--display); background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+/* ── LAYOUT ── */
+.layout { display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 224px; flex-shrink: 0; background: var(--ink);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar-logo { padding: 26px 22px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.sidebar-logo .tag { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.sidebar-logo h1 { font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
+.sidebar-nav { padding: 14px 10px; flex: 1; }
+.nav-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 9px 12px; border: none; background: transparent;
+  color: rgba(255,255,255,0.45); font-family: var(--display);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border-radius: var(--radius-sm); transition: all .15s; text-align: left; margin-bottom: 2px;
+}
+.nav-btn .icon { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; background: rgba(255,255,255,0.07); flex-shrink: 0; }
+.nav-btn:hover { color: #fff; background: rgba(255,255,255,0.07); }
+.nav-btn.active { color: #fff; background: var(--accent); }
+.nav-btn.active .icon { background: rgba(255,255,255,0.2); }
+.sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.25); line-height: 1.6; }
+
+/* ── MAIN ── */
+.main { flex: 1; padding: 34px 38px; min-width: 0; }
+.page { display: none; }
+.page.active { display: block; animation: fadeIn .18s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 26px; padding-bottom: 18px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.page-header h2 { font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
+.page-header .sub { font-family: var(--mono); font-size: 11px; color: var(--ink3); margin-top: 3px; }
+
+/* ── STAT CARDS ── */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 26px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+.stat-card .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); margin-bottom: 7px; }
+.stat-card .stat-val { font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
+.stat-card .stat-val.accent { color: var(--accent); }
+.stat-card .stat-val.green { color: var(--green); }
+.stat-card .stat-val.blue { color: var(--blue); }
+.stat-card .stat-val.red { color: var(--red); }
+
+/* ── PANEL ── */
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 22px; }
+.panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.panel h3 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.panel h3::before { content: ''; display: block; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
+
+/* ── TABLE ── */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-wrap thead { background: var(--surface2); }
+.table-wrap th { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink2); padding: 11px 15px; text-align: left; font-weight: 500; border-bottom: 1px solid var(--border); }
+.table-wrap td { padding: 11px 15px; border-bottom: 1px solid var(--border2); color: var(--ink); vertical-align: middle; }
+.table-wrap tr:last-child td { border-bottom: none; }
+.table-wrap tbody tr:hover td { background: #faf8f4; }
+.mono-id { font-family: var(--mono); font-size: 11px; color: var(--ink3); }
+
+/* ── FORMS ── */
+.form-grid { display: grid; gap: 14px; }
+.cols-2 { grid-template-columns: 1fr 1fr; }
+.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink2); }
+.field input, .field select {
+  border: 1px solid var(--border); background: var(--bg); color: var(--ink);
+  font-family: var(--display); font-size: 13px; padding: 8px 11px;
+  border-radius: var(--radius-sm); outline: none; transition: border-color .15s, background .15s;
+}
+.field input:focus, .field select:focus { border-color: var(--accent); background: #fff; }
+.field input::placeholder { color: var(--ink3); }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); font-family: var(--display); font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all .15s; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:not(:disabled):hover { background: var(--accent-dark); }
+.btn-ghost { background: transparent; color: var(--ink2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--surface2); color: var(--ink); }
+.btn-sm { padding: 5px 11px; font-size: 11px; }
+.btn-danger-soft { background: var(--red-light); color: var(--red); }
+.btn-danger-soft:hover { background: #f7c1c1; }
+.btn-green-soft { background: var(--green-light); color: var(--green); }
+.btn-green-soft:hover { background: #c0dd97; }
+.btn-blue-soft { background: var(--blue-light); color: var(--blue); }
+.btn-blue-soft:hover { background: #b5d4f4; }
+
+/* ── INLINE EDIT ── */
+.edit-input { border: 1px solid transparent; background: transparent; font-family: var(--display); font-size: 13px; color: var(--ink); padding: 4px 7px; border-radius: 6px; width: 100%; outline: none; transition: border-color .15s, background .15s; }
+.edit-input:focus { border-color: var(--accent); background: var(--accent-light); }
+
+/* ── BADGES ── */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: var(--mono); font-size: 10px; font-weight: 500; }
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-amber { background: var(--amber-light); color: var(--amber); }
+.badge-red   { background: var(--red-light);   color: var(--red); }
+.badge-blue  { background: var(--blue-light);  color: var(--blue); }
+
+/* ── CART ── */
+.cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface2); margin-bottom: 8px; }
+.cart-item .ci-name { flex: 1; font-size: 13px; font-weight: 600; }
+.cart-item .ci-price { font-family: var(--mono); font-size: 12px; color: var(--ink2); min-width: 70px; text-align: right; }
+.cart-qty { display: flex; align-items: center; gap: 6px; }
+.cart-qty button { width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 14px; font-weight: 700; line-height: 1; display: flex; align-items: center; justify-content: center; transition: background .12s; }
+.cart-qty button:hover { background: var(--surface2); }
+.cart-qty span { font-family: var(--mono); font-size: 13px; min-width: 20px; text-align: center; }
+.cart-empty { text-align: center; padding: 28px; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+
+/* ── ORDER SUMMARY ── */
+.order-summary { background: var(--surface2); border-radius: var(--radius-sm); padding: 14px; font-size: 13px; margin-top: 14px; }
+.order-summary .line { display: flex; justify-content: space-between; padding: 3px 0; color: var(--ink2); font-size: 12px; }
+.order-summary .line.total { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px; font-size: 16px; font-weight: 800; color: var(--ink); }
+.order-summary .line.total .amt { color: var(--accent); }
+
+/* ── TOAST ── */
+#toast { position: fixed; bottom: 26px; right: 26px; background: var(--ink); color: #fff; font-family: var(--mono); font-size: 12px; padding: 11px 18px; border-radius: var(--radius-sm); opacity: 0; transform: translateY(8px); transition: all .22s; pointer-events: none; z-index: 999; max-width: 320px; line-height: 1.5; }
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.success { border-left: 3px solid #97C459; }
+#toast.error   { border-left: 3px solid #F09595; }
+
+/* ── SPINNER ── */
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── MODAL ── */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(26,25,21,0.55); z-index: 200; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--surface); border-radius: var(--radius); padding: 26px; width: 420px; max-width: 94vw; max-height: 90vh; overflow-y: auto; }
+.modal h3 { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.modal p.sub { font-size: 13px; color: var(--ink2); margin-bottom: 20px; line-height: 1.5; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ── RECEIPT ── */
+.receipt { font-family: var(--mono); font-size: 12px; }
+.receipt .r-header { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed var(--border); margin-bottom: 12px; }
+.receipt .r-header h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.receipt .r-row { display: flex; justify-content: space-between; padding: 4px 0; }
+.receipt .r-row.bold { font-weight: 700; font-size: 13px; border-top: 1px dashed var(--border); margin-top: 6px; padding-top: 8px; }
+.receipt .r-footer { text-align: center; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--ink3); }
+
+/* ── TOP-UP PILL ── */
+.topup-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.topup-presets button { padding: 4px 12px; border-radius: 20px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); background: var(--surface2); color: var(--ink2); cursor: pointer; transition: all .12s; }
+.topup-presets button:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+
+/* ── LOADING STATE ── */
+.loading-row td { text-align: center; padding: 36px; color: var(--ink3); font-family: var(--mono); font-size: 12px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .main { padding: 18px 14px; }
+  .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
+  .purchase-layout { grid-template-columns: 1fr !important; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="tag">Canteen POS</div>
+    <h1>Canteen<br>System</h1>
+  </div>
+  <div class="sidebar-nav">
+    <button class="nav-btn active" data-page="dashboard" onclick="nav('dashboard')">
+      <span class="icon">⊞</span> Dashboard
+    </button>
+    <button class="nav-btn" data-page="products" onclick="nav('products')">
+      <span class="icon">▤</span> Products
+    </button>
+    <button class="nav-btn" data-page="purchase" onclick="nav('purchase')">
+      <span class="icon">◈</span> Purchase
+    </button>
+    <button class="nav-btn" data-page="users" onclick="nav('users')">
+      <span class="icon">◉</span> Users
+    </button>
+    <button class="nav-btn" data-page="reports" onclick="nav('reports')">
+      <span class="icon">◫</span> Reports
+    </button>
+  </div>
+  <div class="sidebar-footer">
+    <div id="db-status">⬤ Connecting…</div>
+    <div style="margin-top:3px">canteen_system · localhost</div>
+  </div>
+</nav>
+
+<!-- ═══════ MAIN ═══════ -->
+<main class="main">
+
+<!-- ───── DASHBOARD ───── -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div><h2>Dashboard</h2><div class="sub" id="dash-date">—</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="loadDashboard()">↺ Refresh</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Today's Revenue</div><div class="stat-val accent" id="d-sales">—</div></div>
+    <div class="stat-card"><div class="stat-label">Transactions</div><div class="stat-val" id="d-txns">—</div></div>
+    <div class="stat-card"><div class="stat-label">Products</div><div class="stat-val green" id="d-prods">—</div></div>
+    <div class="stat-card"><div class="stat-label">Users</div><div class="stat-val blue" id="d-users">—</div></div>
+    <div class="stat-card"><div class="stat-label">Low Stock</div><div class="stat-val" id="d-low">—</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><h3>Recent Transactions</h3></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody id="dash-tbody"><tr class="loading-row"><td colspan="5">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ───── PRODUCTS ───── -->
+<div class="page" id="page-products">
+  <div class="page-header">
+    <div><h2>Products</h2><div class="sub">Manage your catalog · click any field to edit inline</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-add-product')">+ Add Product</button>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Name</th><th>Price (₱)</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="prod-tbody"><tr class="loading-row"><td colspan="6">Loading…</td></tr></tbody>
+  </table></div>
+</div>
+
+<!-- ───── PURCHASE ───── -->
+<div class="page" id="page-purchase">
+  <div class="page-header">
+    <div><h2>Purchase</h2><div class="sub">Build a cart and process payment</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start" class="purchase-layout">
+
+    <div>
+      <!-- User select -->
+      <div class="panel">
+        <h3 style="margin-bottom:14px">Customer</h3>
+        <div class="field">
+          <label>Select User</label>
+          <select id="pur-user" onchange="onUserChange()">
+            <option value="">— choose user —</option>
+          </select>
+        </div>
+        <div id="user-info-bar" style="display:none;margin-top:10px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);font-size:13px;display:none;align-items:center;justify-content:space-between;">
+          <span style="color:var(--ink2)">Balance</span>
+          <span id="user-bal-show" style="font-family:var(--mono);font-weight:700;color:var(--green)">₱0.00</span>
+        </div>
+      </div>
+
+      <!-- Add to cart -->
+      <div class="panel">
+        <h3 style="margin-bottom:14px">Add Items</h3>
+        <div class="form-grid cols-3" style="align-items:end">
+          <div class="field" style="grid-column:span 2">
+            <label>Product</label>
+            <select id="pur-prod">
+              <option value="">— choose product —</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Qty</label>
+            <input type="number" id="pur-qty" value="1" min="1" style="max-width:100%">
+          </div>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addToCart()">+ Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Cart + summary -->
+    <div>
+      <div class="panel" style="position:sticky;top:20px">
+        <div class="panel-header">
+          <h3>Cart</h3>
+          <button class="btn btn-sm btn-ghost" onclick="clearCart()" style="font-size:11px">Clear</button>
+        </div>
+        <div id="cart-list"><div class="cart-empty">Cart is empty</div></div>
+        <div class="order-summary" id="cart-summary" style="display:none">
+          <div class="line"><span>Subtotal</span><span id="cs-sub">₱0.00</span></div>
+          <div class="line total"><span>Total</span><span class="amt" id="cs-total">₱0.00</span></div>
+        </div>
+        <button class="btn btn-primary" id="checkout-btn" onclick="checkout()" style="width:100%;margin-top:14px;justify-content:center" disabled>
+          Confirm Purchase
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───── USERS ───── -->
+<div class="page" id="page-users">
+  <div class="page-header">
+    <div><h2>Users</h2><div class="sub">Manage students &amp; teachers · top-up balances</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-add-user')">+ Add User</button>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Balance</th><th>Actions</th></tr></thead>
+    <tbody id="users-tbody"><tr class="loading-row"><td colspan="5">Loading…</td></tr></tbody>
+  </table></div>
+</div>
+
+<!-- ───── REPORTS ───── -->
+<div class="page" id="page-reports">
+  <div class="page-header">
+    <div><h2>Reports</h2><div class="sub">Sales history &amp; daily summary</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="loadReports()">↺ Refresh</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Today's Revenue</div><div class="stat-val accent" id="r-sales">—</div></div>
+    <div class="stat-card"><div class="stat-label">Today's Transactions</div><div class="stat-val" id="r-count">—</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><h3>Last 50 Transactions</h3></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Date</th></tr></thead>
+      <tbody id="rep-tbody"><tr class="loading-row"><td colspan="4">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ═══════ MODALS ═══════ -->
+
+<!-- Add Product -->
+<div class="modal-bg" id="modal-add-product">
+  <div class="modal">
+    <h3>Add Product</h3>
+    <p class="sub">New item will appear in the catalog immediately.</p>
+    <div class="form-grid cols-2" style="margin-bottom:14px">
+      <div class="field" style="grid-column:span 2"><label>Name</label><input type="text" id="np-name" placeholder="e.g. Fried Rice"></div>
+      <div class="field"><label>Price (₱)</label><input type="number" id="np-price" step="0.01" min="0" placeholder="0.00"></div>
+      <div class="field"><label>Stock</label><input type="number" id="np-stock" min="0" placeholder="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-product')">Cancel</button>
+      <button class="btn btn-primary" onclick="createProduct()">Add Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User -->
+<div class="modal-bg" id="modal-add-user">
+  <div class="modal">
+    <h3>Add User</h3>
+    <p class="sub">Create a new student or teacher account.</p>
+    <div class="form-grid cols-2" style="margin-bottom:14px">
+      <div class="field" style="grid-column:span 2"><label>Full Name</label><input type="text" id="nu-name" placeholder="e.g. Juan dela Cruz"></div>
+      <div class="field">
+        <label>Type</label>
+        <select id="nu-type">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </div>
+      <div class="field"><label>Initial Balance (₱)</label><input type="number" id="nu-balance" min="0" step="0.01" value="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-user')">Cancel</button>
+      <button class="btn btn-primary" onclick="createUser()">Add User</button>
+    </div>
+  </div>
+</div>
+
+<!-- Top-up -->
+<div class="modal-bg" id="modal-topup">
+  <div class="modal">
+    <h3>Top-Up Balance</h3>
+    <p class="sub" id="topup-name-label">Add funds to this account.</p>
+    <input type="hidden" id="topup-uid">
+    <div class="field" style="margin-bottom:10px">
+      <label>Amount (₱)</label>
+      <input type="number" id="topup-amount" min="1" step="0.01" placeholder="0.00">
+    </div>
+    <div class="topup-presets">
+      <button onclick="setTopup(20)">₱20</button>
+      <button onclick="setTopup(50)">₱50</button>
+      <button onclick="setTopup(100)">₱100</button>
+      <button onclick="setTopup(200)">₱200</button>
+      <button onclick="setTopup(500)">₱500</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-topup')">Cancel</button>
+      <button class="btn btn-green-soft" onclick="doTopup()">Add Funds</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm generic -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal">
+    <h3 id="mc-title">Confirm</h3>
+    <p class="sub" id="mc-body">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Cancel</button>
+      <button class="btn btn-danger-soft" id="mc-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt -->
+<div class="modal-bg" id="modal-receipt">
+  <div class="modal">
+    <h3>Purchase Complete</h3>
+    <p class="sub">Transaction processed successfully.</p>
+    <div class="receipt" id="receipt-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="closeModal('modal-receipt');clearCart()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG — point this at your server folder
+// ═══════════════════════════════════════════════
+const API = 'api.php';
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let products = [];
+let users    = [];
+let cart     = []; // [{ product, qty }]
+
+// ═══════════════════════════════════════════════
+//  API HELPERS
+// ═══════════════════════════════════════════════
+async function get(action) {
+  const r = await fetch(`${API}?action=${action}`);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function post(action, data = {}) {
+  const fd = new FormData();
+  fd.append('action', action);
+  for (const [k, v] of Object.entries(data)) fd.append(k, v);
+  const r = await fetch(API, { method: 'POST', body: fd });
+  return r.json();
+}
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+const loaders = {
+  dashboard: loadDashboard,
+  products:  loadProducts,
+  purchase:  loadPurchasePage,
+  users:     loadUsers,
+  reports:   loadReports,
+};
+
+function nav(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelector(`[data-page="${id}"]`).classList.add('active');
+  if (loaders[id]) loaders[id]();
+}
+
+// ═══════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════
+let _tt;
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = type;
+  t.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ═══════════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════════
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function confirm_(title, body, cb, btnLabel = 'Confirm') {
+  document.getElementById('mc-title').textContent = title;
+  document.getElementById('mc-body').textContent  = body;
+  document.getElementById('mc-ok').textContent    = btnLabel;
+  document.getElementById('mc-ok').onclick = () => { closeModal('modal-confirm'); cb(); };
+  openModal('modal-confirm');
+}
+
+// ═══════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════
+const peso = n => '₱' + parseFloat(n).toFixed(2);
+const esc  = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function fmtDate(s) {
+  return new Date(s).toLocaleString('en-PH', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+function stockBadge(s) {
+  s = parseInt(s);
+  if (s <= 0)  return `<span class="badge badge-red">Out of stock</span>`;
+  if (s <= 5)  return `<span class="badge badge-amber">Low · ${s}</span>`;
+  return `<span class="badge badge-green">In stock · ${s}</span>`;
+}
+
+// ═══════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════
+async function loadDashboard() {
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  try {
+    const d = await get('dashboard');
+    document.getElementById('d-sales').textContent = peso(d.today_sales);
+    document.getElementById('d-txns').textContent  = d.today_count;
+    document.getElementById('d-prods').textContent = d.product_count;
+    document.getElementById('d-users').textContent = d.user_count;
+    const low = d.low_stock;
+    document.getElementById('d-low').textContent   = low;
+    document.getElementById('d-low').style.color   = low > 0 ? 'var(--accent)' : 'var(--ink)';
+
+    const tbody = document.getElementById('dash-tbody');
+    if (!d.recent.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="5">No transactions yet</td></tr>'; return; }
+    tbody.innerHTML = d.recent.map(t => `<tr>
+      <td class="mono-id">#${t.transaction_id}</td>
+      <td>${esc(t.name)}</td>
+      <td style="font-weight:700">${peso(t.total_amount)}</td>
+      <td class="mono-id">${fmtDate(t.transaction_date)}</td>
+      <td><span class="badge badge-green">Completed</span></td>
+    </tr>`).join('');
+    setDbStatus(true);
+  } catch(e) { setDbStatus(false); }
+}
+
+function setDbStatus(ok) {
+  const el = document.getElementById('db-status');
+  el.textContent = ok ? '⬤ Connected' : '⬤ Offline';
+  el.style.color  = ok ? 'rgba(151,196,89,0.8)' : 'rgba(240,149,149,0.8)';
+}
+
+// ═══════════════════════════════════════════════
+//  PRODUCTS
+// ═══════════════════════════════════════════════
+async function loadProducts() {
+  try {
+    const d = await get('products');
+    products = d.products;
+    renderProducts();
+    setDbStatus(true);
+  } catch(e) { setDbStatus(false); toast('Could not load products.', 'error'); }
+}
+
+function renderProducts() {
+  const tbody = document.getElementById('prod-tbody');
+  if (!products.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="6">No products found</td></tr>'; return; }
+  tbody.innerHTML = products.map(p => `<tr data-pid="${p.product_id}">
+    <td class="mono-id">${p.product_id}</td>
+    <td><input class="edit-input" data-id="${p.product_id}" data-f="name"  value="${esc(p.name)}"  onblur="saveProductField(this)"></td>
+    <td><input class="edit-input" data-id="${p.product_id}" data-f="price" value="${parseFloat(p.price).toFixed(2)}" type="number" step="0.01" onblur="saveProductField(this)" style="max-width:90px"></td>
+    <td><input class="edit-input" data-id="${p.product_id}" data-f="stock" value="${p.stock}" type="number" onblur="saveProductField(this)" style="max-width:74px"></td>
+    <td>${stockBadge(p.stock)}</td>
+    <td><button class="btn btn-sm btn-danger-soft" onclick="deleteProduct(${p.product_id},'${esc(p.name)}')">Delete</button></td>
+  </tr>`).join('');
+}
+
+async function saveProductField(input) {
+  const id = input.dataset.id;
+  const p  = products.find(x => x.product_id == id);
+  if (!p) return;
+  // build updated object
+  const updated = { ...p };
+  updated[input.dataset.f === 'name' ? 'name' : input.dataset.f === 'price' ? 'price' : 'stock'] = input.value;
+  const r = await post('product_update', { id: p.product_id, name: updated.name, price: parseFloat(updated.price) || p.price, stock: parseInt(updated.stock) ?? p.stock });
+  if (r.ok) { toast('Saved.'); await loadProducts(); }
+  else toast(r.error, 'error');
+}
+
+async function createProduct() {
+  const name  = document.getElementById('np-name').value.trim();
+  const price = parseFloat(document.getElementById('np-price').value);
+  const stock = parseInt(document.getElementById('np-stock').value) || 0;
+  if (!name || isNaN(price)) { toast('Name and price are required.', 'error'); return; }
+  const r = await post('product_create', { name, price, stock });
+  if (r.ok) { toast('Product created!'); closeModal('modal-add-product'); document.getElementById('np-name').value = ''; await loadProducts(); }
+  else toast(r.error, 'error');
+}
+
+function deleteProduct(id, name) {
+  confirm_('Delete Product', `Delete "${name}"? This cannot be undone.`, async () => {
+    const r = await post('product_delete', { id });
+    if (r.ok) { toast('Product deleted.'); await loadProducts(); }
+    else toast(r.error, 'error');
+  }, 'Delete');
+}
+
+// ═══════════════════════════════════════════════
+//  USERS
+// ═══════════════════════════════════════════════
+async function loadUsers() {
+  try {
+    const d = await get('users');
+    users = d.users;
+    renderUsers();
+  } catch(e) { toast('Could not load users.', 'error'); }
+}
+
+function renderUsers() {
+  const tbody = document.getElementById('users-tbody');
+  if (!users.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="5">No users found</td></tr>'; return; }
+  tbody.innerHTML = users.map(u => `<tr>
+    <td class="mono-id">${u.user_id}</td>
+    <td style="font-weight:600">${esc(u.name)}</td>
+    <td><span class="badge ${u.user_type==='teacher'?'badge-blue':'badge-green'}">${u.user_type}</span></td>
+    <td style="font-family:var(--mono);font-weight:700;color:${parseFloat(u.balance)<50?'var(--red)':'var(--green)'}">${peso(u.balance)}</td>
+    <td><button class="btn btn-sm btn-green-soft" onclick="openTopup(${u.user_id},'${esc(u.name)}',${u.balance})">Top-Up</button></td>
+  </tr>`).join('');
+}
+
+function openTopup(uid, name, bal) {
+  document.getElementById('topup-uid').value      = uid;
+  document.getElementById('topup-name-label').textContent = `Adding funds to ${name} · Current: ${peso(bal)}`;
+  document.getElementById('topup-amount').value   = '';
+  openModal('modal-topup');
+}
+function setTopup(v) { document.getElementById('topup-amount').value = v; }
+
+async function doTopup() {
+  const uid = document.getElementById('topup-uid').value;
+  const amt = parseFloat(document.getElementById('topup-amount').value);
+  if (!amt || amt <= 0) { toast('Enter a valid amount.', 'error'); return; }
+  const r = await post('user_topup', { user_id: uid, amount: amt });
+  if (r.ok) {
+    toast(`Balance updated! New balance: ${peso(r.new_balance)}`);
+    closeModal('modal-topup');
+    await loadUsers();
+  } else toast(r.error, 'error');
+}
+
+async function createUser() {
+  const name    = document.getElementById('nu-name').value.trim();
+  const type    = document.getElementById('nu-type').value;
+  const balance = parseFloat(document.getElementById('nu-balance').value) || 0;
+  if (!name) { toast('Name is required.', 'error'); return; }
+  const r = await post('user_create', { name, user_type: type, balance });
+  if (r.ok) { toast('User created!'); closeModal('modal-add-user'); document.getElementById('nu-name').value = ''; await loadUsers(); }
+  else toast(r.error, 'error');
+}
+
+// ═══════════════════════════════════════════════
+//  PURCHASE
+// ═══════════════════════════════════════════════
+async function loadPurchasePage() {
+  try {
+    const [pd, ud] = await Promise.all([get('products'), get('users')]);
+    products = pd.products;
+    users    = ud.users;
+    populatePurchaseDropdowns();
+  } catch(e) { toast('Could not load purchase data.', 'error'); }
+}
+
+function populatePurchaseDropdowns() {
+  const uSel = document.getElementById('pur-user');
+  const cur  = uSel.value;
+  uSel.innerHTML = '<option value="">— choose user —</option>' +
+    users.map(u => `<option value="${u.user_id}" ${u.user_id==cur?'selected':''}>${esc(u.name)} (${peso(u.balance)})</option>`).join('');
+  if (cur) onUserChange();
+
+  const pSel = document.getElementById('pur-prod');
+  pSel.innerHTML = '<option value="">— choose product —</option>' +
+    products.filter(p => parseInt(p.stock)>0).map(p =>
+      `<option value="${p.product_id}">${esc(p.name)} — ${peso(p.price)} · ${p.stock} left</option>`).join('');
+}
+
+function onUserChange() {
+  const uid  = parseInt(document.getElementById('pur-user').value);
+  const user = users.find(u => u.user_id == uid);
+  const bar  = document.getElementById('user-info-bar');
+  if (user) {
+    bar.style.display = 'flex';
+    document.getElementById('user-bal-show').textContent = peso(user.balance);
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+function addToCart() {
+  const pid = parseInt(document.getElementById('pur-prod').value);
+  const qty = parseInt(document.getElementById('pur-qty').value) || 1;
+  if (!pid) { toast('Select a product first.', 'error'); return; }
+  const prod = products.find(p => p.product_id == pid);
+  if (!prod) return;
+
+  const existing = cart.find(c => c.product.product_id == pid);
+  const newQty   = (existing ? existing.qty : 0) + qty;
+  if (newQty > parseInt(prod.stock)) { toast(`Only ${prod.stock} in stock.`, 'error'); return; }
+
+  if (existing) existing.qty = newQty;
+  else          cart.push({ product: prod, qty });
+
+  document.getElementById('pur-qty').value = 1;
+  renderCart();
+  toast(`${prod.name} added to cart.`);
+}
+
+function removeFromCart(pid) {
+  cart = cart.filter(c => c.product.product_id != pid);
+  renderCart();
+}
+
+function changeQty(pid, delta) {
+  const item = cart.find(c => c.product.product_id == pid);
+  if (!item) return;
+  const newQty = item.qty + delta;
+  if (newQty <= 0) { removeFromCart(pid); return; }
+  if (newQty > parseInt(item.product.stock)) { toast('Not enough stock.', 'error'); return; }
+  item.qty = newQty;
+  renderCart();
+}
+
+function clearCart() { cart = []; renderCart(); }
+
+function renderCart() {
+  const list    = document.getElementById('cart-list');
+  const summary = document.getElementById('cart-summary');
+  const btn     = document.getElementById('checkout-btn');
+
+  if (!cart.length) {
+    list.innerHTML = '<div class="cart-empty">Cart is empty</div>';
+    summary.style.display = 'none';
+    btn.disabled = true;
+    return;
+  }
+
+  list.innerHTML = cart.map(c => `
+    <div class="cart-item">
+      <div class="ci-name">${esc(c.product.name)}</div>
+      <div class="cart-qty">
+        <button onclick="changeQty(${c.product.product_id},-1)">−</button>
+        <span>${c.qty}</span>
+        <button onclick="changeQty(${c.product.product_id},1)">+</button>
+      </div>
+      <div class="ci-price">${peso(c.product.price * c.qty)}</div>
+      <button onclick="removeFromCart(${c.product.product_id})" style="background:transparent;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:2px 4px;">×</button>
+    </div>`).join('');
+
+  const subtotal = cart.reduce((s,c) => s + c.product.price * c.qty, 0);
+  document.getElementById('cs-sub').textContent   = peso(subtotal);
+  document.getElementById('cs-total').textContent = peso(subtotal);
+  summary.style.display = 'block';
+  btn.disabled = false;
+}
+
+async function checkout() {
+  const uid = parseInt(document.getElementById('pur-user').value);
+  if (!uid)        { toast('Select a user first.', 'error'); return; }
+  if (!cart.length){ toast('Cart is empty.', 'error'); return; }
+
+  const user  = users.find(u => u.user_id == uid);
+  const total = cart.reduce((s,c) => s + c.product.price * c.qty, 0);
+  const items = cart.map(c => ({ product_id: c.product.product_id, quantity: c.qty }));
+
+  confirm_(`Confirm Purchase`,
+    `Charge ${peso(total)} to ${user?.name || 'this user'}?`,
+    async () => {
+      const btn = document.getElementById('checkout-btn');
+      btn.innerHTML = '<span class="spinner"></span> Processing…';
+      btn.disabled = true;
+
+      const r = await post('purchase', { user_id: uid, items: JSON.stringify(items) });
+
+      btn.innerHTML = 'Confirm Purchase';
+      btn.disabled  = false;
+
+      if (r.ok) {
+        showReceipt(r, user);
+        await loadPurchasePage(); // refresh balances/stock
+      } else {
+        toast(r.error, 'error');
+      }
+    }, 'Confirm'
+  );
+}
+
+function showReceipt(r, user) {
+  const rows = r.items.map(i =>
+    `<div class="r-row"><span>${esc(i.name)} × ${i.qty}</span><span>${peso(i.subtotal)}</span></div>`
+  ).join('');
+  document.getElementById('receipt-body').innerHTML = `
+    <div class="r-header">
+      <h4>Canteen System</h4>
+      <div>Txn #${r.transaction_id} · ${new Date().toLocaleString('en-PH')}</div>
+    </div>
+    <div class="r-row"><span>Customer</span><span>${esc(user?.name||'—')}</span></div>
+    ${rows}
+    <div class="r-row bold"><span>Total Paid</span><span>${peso(r.total)}</span></div>
+    <div class="r-row"><span>Remaining Balance</span><span>${peso(r.new_balance)}</span></div>
+    <div class="r-footer">Thank you!</div>`;
+  closeModal('modal-confirm');
+  openModal('modal-receipt');
+}
+
+// ═══════════════════════════════════════════════
+//  REPORTS
+// ═══════════════════════════════════════════════
+async function loadReports() {
+  try {
+    const d = await get('reports');
+    document.getElementById('r-sales').textContent = peso(d.today_sales);
+    document.getElementById('r-count').textContent = d.today_count;
+
+    const tbody = document.getElementById('rep-tbody');
+    if (!d.transactions.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="4">No transactions yet</td></tr>'; return; }
+    tbody.innerHTML = d.transactions.map(t => `<tr>
+      <td class="mono-id">#${t.transaction_id}</td>
+      <td>${esc(t.name)}</td>
+      <td style="font-weight:700">${peso(t.total_amount)}</td>
+      <td class="mono-id">${fmtDate(t.transaction_date)}</td>
+    </tr>`).join('');
+  } catch(e) { toast('Could not load reports.', 'error'); }
+}
+
+// ═══════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════
+loadDashboard();
+</script>
+</body>
+</html>
