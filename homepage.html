@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canteen System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F2EB;
+    --surface: #FFFFFF;
+    --surface2: #EDEAE1;
+    --ink: #1A1915;
+    --ink2: #6B6860;
+    --ink3: #A09D97;
+    --accent: #D85A30;
+    --accent-light: #FAECE7;
+    --accent-dark: #993C1D;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --border: rgba(26,25,21,0.12);
+    --border2: rgba(26,25,21,0.07);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --mono: 'DM Mono', monospace;
+    --display: 'Syne', sans-serif;
+  }
+
+  body {
+    font-family: var(--display);
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-logo .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .sidebar-logo h1 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .sidebar-nav { padding: 16px 12px; flex: 1; }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s;
+    text-align: left;
+    margin-bottom: 2px;
+  }
+  .nav-btn .icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    background: rgba(255,255,255,0.07);
+    flex-shrink: 0;
+  }
+  .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.07); }
+  .nav-btn.active { color: #fff; background: var(--accent); }
+  .nav-btn.active .icon { background: rgba(255,255,255,0.2); }
+
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ---------- MAIN ---------- */
+  .main { flex: 1; padding: 36px 40px; min-width: 0; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .page-header h2 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .page-header .sub {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink3);
+    margin-top: 2px;
+  }
+
+  /* ---------- CARDS ---------- */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .stat-card .stat-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 8px;
+  }
+  .stat-card .stat-val {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .stat-card .stat-val.accent { color: var(--accent); }
+  .stat-card .stat-val.green { color: var(--green); }
+
+  /* ---------- TABLE ---------- */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .table-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .table-wrap thead {
+    background: var(--surface2);
+  }
+  .table-wrap th {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink2);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-wrap td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border2);
+    color: var(--ink);
+  }
+  .table-wrap tr:last-child td { border-bottom: none; }
+  .table-wrap tr:hover td { background: var(--surface2); }
+
+  /* ---------- FORMS ---------- */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .panel h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .panel h3::before {
+    content: '';
+    display: block;
+    width: 3px; height: 16px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row.single { grid-template-columns: 1fr; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink2);
+  }
+  .field input, .field select {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: 14px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--accent);
+    background: #fff;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface2); color: var(--ink); }
+  .btn-danger { background: #FCEBEB; color: #A32D2D; }
+  .btn-danger:hover { background: #F7C1C1; }
+
+  /* ---------- INLINE EDIT TABLE ---------- */
+  .edit-input {
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: var(--display);
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 8px;
+    border-radius: 6px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .edit-input:focus {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* ---------- BADGE ---------- */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-amber { background: #FAEEDA; color: #854F0B; }
+  .badge-red   { background: #FCEBEB; color: #A32D2D; }
+
+  /* ---------- TOAST ---------- */
+  #toast {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    background: var(--ink);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s;
+    pointer-events: none;
+    z-index: 999;
+    max-width: 300px;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.success::before { content: '✓  '; color: #97C459; }
+  #toast.error::before   { content: '✕  '; color: #F09595; }
+
+  /* ---------- EMPTY STATE ---------- */
+  .empty { padding: 48px; text-align: center; color: var(--ink3); font-size: 13px; font-family: var(--mono); }
+
+  /* ---------- CONFIRM MODAL ---------- */
+  .modal-bg {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26,25,21,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 360px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  }
+  .modal h3 { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+  .modal p { font-size: 14px; color: var(--ink2); margin-bottom: 22px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* ---------- PURCHASE SUMMARY ---------- */
+  .purchase-summary {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  .purchase-summary .line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    color: var(--ink2);
+  }
+  .purchase-summary .line.total {
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+    padding-top: 10px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .purchase-summary .line.total .amt { color: var(--accent); }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 640px) {
+    .sidebar { display: none; }
+    .main { padding: 20px 16px; }
+    .form-row, .form-row.triple { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="tag">POS v1.0</div>
+      <h1>Canteen<br>System</h1>
+    </div>
+    <div class="sidebar-nav">
+      <button class="nav-btn active" onclick="showPage('dashboard')">
+        <span class="icon">⊞</span> Dashboard
+      </button>
+      <button class="nav-btn" onclick="showPage('products')">
+        <span class="icon">▤</span> Products
+      </button>
+      <button class="nav-btn" onclick="showPage('purchase')">
+        <span class="icon">◈</span> Purchase
+      </button>
+      <button class="nav-btn" onclick="showPage('reports')">
+        <span class="icon">◫</span> Reports
+      </button>
+    </div>
+    <div class="sidebar-footer">canteen_system · localhost</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ======== DASHBOARD ======== -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h2>Dashboard</h2>
+          <div class="sub" id="dash-date">—</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Today's Sales</div>
+          <div class="stat-val accent" id="dash-sales">₱0.00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Transactions</div>
+          <div class="stat-val" id="dash-txns">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Products</div>
+          <div class="stat-val green" id="dash-products">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Low Stock</div>
+          <div class="stat-val" id="dash-lowstock">0</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Recent Transactions</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>#</th><th>User</th><th>Amount</th><th>Date</th><th>Status</th>
+            </tr></thead>
+            <tbody id="dash-txn-body">
+              <tr><td colspan="5" class="empty">No transactions yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== PRODUCTS ======== -->
+    <div class="page" id="page-products">
+      <div class="page-header">
+        <div>
+          <h2>Products</h2>
+          <div class="sub">Manage your product catalog</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddProduct()">+ Add Product</button>
+      </div>
+
+      <!-- Add form (hidden by default) -->
+      <div class="panel" id="add-product-form" style="display:none;">
+        <h3>New Product</h3>
+        <div class="form-row triple">
+          <div class="field">
+            <label>Name</label>
+            <input type="text" id="new-name" placeholder="e.g. Fried Rice">
+          </div>
+          <div class="field">
+            <label>Price (₱)</label>
+            <input type="number" id="new-price" placeholder="0.00" step="0.01" min="0">
+          </div>
+          <div class="field">
+            <label>Stock</label>
+            <input type="number" id="new-stock" placeholder="0" min="0">
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:4px;">
+          <button class="btn btn-primary" onclick="createProduct()">Add Product</button>
+          <button class="btn btn-ghost" onclick="closeAddProduct()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="products-body">
+            <tr><td colspan="6" class="empty">Loading products…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ======== PURCHASE ======== -->
+    <div class="page" id="page-purchase">
+      <div class="page-header">
+        <div>
+          <h2>Make a Purchase</h2>
+          <div class="sub">Process a student or staff transaction</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start;">
+        <div>
+          <div class="panel">
+            <h3>Select User</h3>
+            <div class="field">
+              <label>User</label>
+              <select id="pur-user" onchange="updatePurchaseSummary()">
+                <option value="">— choose user —</option>
+              </select>
+            </div>
+            <div id="user-balance-info" style="margin-top:10px; font-family:var(--mono); font-size:12px; color:var(--ink3); display:none;">
+              Balance: <span id="user-balance-display" style="color:var(--green); font-weight:600;">₱0.00</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Select Product</h3>
+            <div class="field">
+              <label>Product</label>
+              <select id="pur-product" onchange="updatePurchaseSummary()">
+                <option value="">— choose product —</option>
+              </select>
+            </div>
+            <div class="field" style="margin-top:14px;">
+              <label>Quantity</label>
+              <input type="number" id="pur-qty" value="1" min="1" oninput="updatePurchaseSummary()" style="max-width:140px;">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel" style="position: sticky; top: 20px;">
+            <h3>Order Summary</h3>
+            <div class="purchase-summary">
+              <div class="line"><span>Product</span><span id="sum-product">—</span></div>
+              <div class="line"><span>Unit Price</span><span id="sum-price">—</span></div>
+              <div class="line"><span>Quantity</span><span id="sum-qty">—</span></div>
+              <div class="line total"><span>Total</span><span class="amt" id="sum-total">₱0.00</span></div>
+            </div>
+            <button class="btn btn-primary" onclick="processPurchase()" style="width:100%; margin-top:16px; justify-content:center;">
+              Confirm Purchase
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== REPORTS ======== -->
+    <div class="page" id="page-reports">
+      <div class="page-header">
+        <div>
+          <h2>Reports</h2>
+          <div class="sub">Sales overview and transaction history</div>
+        </div>
+      </div>
+
+      <div class="stats-row" style="margin-bottom:28px;">
+        <div class="stat-card">
+          <div class="stat-label">Today's Revenue</div>
+          <div class="stat-val accent" id="rep-today">₱0.00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Today's Transactions</div>
+          <div class="stat-val" id="rep-count">0</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>All Transactions (Last 20)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>ID</th><th>User</th><th>Amount</th><th>Date</th>
+            </tr></thead>
+            <tbody id="reports-body">
+              <tr><td colspan="4" class="empty">No transactions found</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-bg" id="confirm-modal">
+  <div class="modal">
+    <h3 id="modal-title">Confirm</h3>
+    <p id="modal-body">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="modal-confirm-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ===== DATA STORE =====
+let db = {
+  products: [
+    { id: 1, name: 'Fried Rice', price: 45.00, stock: 20 },
+    { id: 2, name: 'Chicken Adobo', price: 65.00, stock: 15 },
+    { id: 3, name: 'Soda (Regular)', price: 20.00, stock: 50 },
+    { id: 4, name: 'Pancit Canton', price: 55.00, stock: 8 },
+    { id: 5, name: 'Buko Juice', price: 25.00, stock: 2 },
+  ],
+  users: [
+    { id: 1, name: 'Ana Reyes', type: 'student', balance: 500.00 },
+    { id: 2, name: 'Ben Santos', type: 'student', balance: 320.50 },
+    { id: 3, name: 'Maria Cruz', type: 'teacher', balance: 1200.00 },
+    { id: 4, name: 'Jose Lim', type: 'student', balance: 150.00 },
+  ],
+  transactions: [],
+  nextProductId: 6,
+  nextTxnId: 1,
+};
+
+// Persist to localStorage
+function saveDb() {
+  try { localStorage.setItem('canteen_db', JSON.stringify(db)); } catch(e) {}
+}
+function loadDb() {
+  try {
+    const saved = localStorage.getItem('canteen_db');
+    if (saved) db = JSON.parse(saved);
+  } catch(e) {}
+}
+
+// ===== NAVIGATION =====
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => { if (b.textContent.toLowerCase().includes(id.substring(0,4))) b.classList.add('active'); });
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'products') renderProducts();
+  if (id === 'purchase') renderPurchase();
+  if (id === 'reports') renderReports();
+}
+
+// ===== TOAST =====
+let toastTimer;
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.className = type;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ===== CONFIRM MODAL =====
+let modalCallback = null;
+function confirm_(title, body, cb) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  document.getElementById('confirm-modal').classList.add('open');
+  modalCallback = cb;
+}
+function closeModal() {
+  document.getElementById('confirm-modal').classList.remove('open');
+  modalCallback = null;
+}
+document.getElementById('modal-confirm-btn').onclick = () => {
+  if (modalCallback) modalCallback();
+  closeModal();
+};
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const now = new Date();
+  document.getElementById('dash-date').textContent = now.toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const today = now.toDateString();
+  const todayTxns = db.transactions.filter(t => new Date(t.date).toDateString() === today);
+  const todaySales = todayTxns.reduce((s,t) => s + t.total, 0);
+
+  document.getElementById('dash-sales').textContent = '₱' + todaySales.toFixed(2);
+  document.getElementById('dash-txns').textContent = todayTxns.length;
+  document.getElementById('dash-products').textContent = db.products.length;
+  const lowStock = db.products.filter(p => p.stock <= 5).length;
+  document.getElementById('dash-lowstock').textContent = lowStock;
+  const el = document.getElementById('dash-lowstock');
+  el.style.color = lowStock > 0 ? 'var(--accent)' : 'var(--ink)';
+
+  const recent = [...db.transactions].reverse().slice(0, 8);
+  const tbody = document.getElementById('dash-txn-body');
+  if (!recent.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">No transactions yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = recent.map(t => {
+    const u = db.users.find(u => u.id === t.userId);
+    return `<tr>
+      <td><span style="font-family:var(--mono);font-size:12px;color:var(--ink3)">#${t.id}</span></td>
+      <td>${u ? u.name : '—'}</td>
+      <td style="font-weight:600">₱${t.total.toFixed(2)}</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--ink3)">${fmtDate(t.date)}</td>
+      <td><span class="badge badge-green">Completed</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== PRODUCTS =====
+function renderProducts() {
+  const tbody = document.getElementById('products-body');
+  if (!db.products.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">No products yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = db.products.map(p => {
+    const badge = p.stock <= 0
+      ? `<span class="badge badge-red">Out of stock</span>`
+      : p.stock <= 5
+      ? `<span class="badge badge-amber">Low stock</span>`
+      : `<span class="badge badge-green">In stock</span>`;
+    return `<tr>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--ink3)">${p.id}</td>
+      <td><input class="edit-input" data-id="${p.id}" data-field="name" value="${escHtml(p.name)}" onchange="updateProductField(this)"></td>
+      <td><input class="edit-input" data-id="${p.id}" data-field="price" type="number" step="0.01" value="${p.price}" onchange="updateProductField(this)" style="max-width:90px"></td>
+      <td><input class="edit-input" data-id="${p.id}" data-field="stock" type="number" value="${p.stock}" onchange="updateProductField(this)" style="max-width:80px"></td>
+      <td>${badge}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="deleteProduct(${p.id})">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openAddProduct() {
+  document.getElementById('add-product-form').style.display = 'block';
+  document.getElementById('new-name').focus();
+}
+function closeAddProduct() {
+  document.getElementById('add-product-form').style.display = 'none';
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-price').value = '';
+  document.getElementById('new-stock').value = '';
+}
+function createProduct() {
+  const name = document.getElementById('new-name').value.trim();
+  const price = parseFloat(document.getElementById('new-price').value);
+  const stock = parseInt(document.getElementById('new-stock').value) || 0;
+  if (!name || isNaN(price) || price < 0) { toast('Please fill in name and a valid price.', 'error'); return; }
+  db.products.push({ id: db.nextProductId++, name, price, stock });
+  saveDb();
+  closeAddProduct();
+  renderProducts();
+  toast('Product added successfully.');
+}
+function updateProductField(input) {
+  const id = parseInt(input.dataset.id);
+  const field = input.dataset.field;
+  const p = db.products.find(p => p.id === id);
+  if (!p) return;
+  if (field === 'name') p.name = input.value.trim() || p.name;
+  else if (field === 'price') p.price = Math.max(0, parseFloat(input.value) || 0);
+  else if (field === 'stock') p.stock = Math.max(0, parseInt(input.value) || 0);
+  saveDb();
+  renderProducts();
+  toast('Product updated.');
+}
+function deleteProduct(id) {
+  const p = db.products.find(p => p.id === id);
+  confirm_('Delete Product', `Delete "${p.name}"? This cannot be undone.`, () => {
+    db.products = db.products.filter(p => p.id !== id);
+    saveDb();
+    renderProducts();
+    toast('Product deleted.');
+  });
+}
+
+// ===== PURCHASE =====
+function renderPurchase() {
+  const userSel = document.getElementById('pur-user');
+  const curUser = userSel.value;
+  userSel.innerHTML = '<option value="">— choose user —</option>' +
+    db.users.map(u => `<option value="${u.id}" ${u.id == curUser ? 'selected' : ''}>
+      ${escHtml(u.name)} — ₱${u.balance.toFixed(2)}</option>`).join('');
+
+  const prodSel = document.getElementById('pur-product');
+  const curProd = prodSel.value;
+  prodSel.innerHTML = '<option value="">— choose product —</option>' +
+    db.products.filter(p => p.stock > 0).map(p =>
+      `<option value="${p.id}" ${p.id == curProd ? 'selected' : ''}>
+        ${escHtml(p.name)} — ₱${p.price.toFixed(2)} (${p.stock} left)</option>`).join('');
+
+  updatePurchaseSummary();
+}
+
+function updatePurchaseSummary() {
+  const uid = parseInt(document.getElementById('pur-user').value);
+  const pid = parseInt(document.getElementById('pur-product').value);
+  const qty = Math.max(1, parseInt(document.getElementById('pur-qty').value) || 1);
+  const user = db.users.find(u => u.id === uid);
+  const prod = db.products.find(p => p.id === pid);
+
+  const balInfo = document.getElementById('user-balance-info');
+  if (user) {
+    balInfo.style.display = 'block';
+    document.getElementById('user-balance-display').textContent = '₱' + user.balance.toFixed(2);
+  } else {
+    balInfo.style.display = 'none';
+  }
+
+  if (prod) {
+    document.getElementById('sum-product').textContent = prod.name;
+    document.getElementById('sum-price').textContent = '₱' + prod.price.toFixed(2);
+    document.getElementById('sum-qty').textContent = qty;
+    document.getElementById('sum-total').textContent = '₱' + (prod.price * qty).toFixed(2);
+  } else {
+    document.getElementById('sum-product').textContent = '—';
+    document.getElementById('sum-price').textContent = '—';
+    document.getElementById('sum-qty').textContent = '—';
+    document.getElementById('sum-total').textContent = '₱0.00';
+  }
+}
+
+function processPurchase() {
+  const uid = parseInt(document.getElementById('pur-user').value);
+  const pid = parseInt(document.getElementById('pur-product').value);
+  const qty = Math.max(1, parseInt(document.getElementById('pur-qty').value) || 1);
+
+  if (!uid) { toast('Please select a user.', 'error'); return; }
+  if (!pid) { toast('Please select a product.', 'error'); return; }
+
+  const user = db.users.find(u => u.id === uid);
+  const prod = db.products.find(p => p.id === pid);
+  const total = prod.price * qty;
+
+  if (prod.stock < qty) { toast('Not enough stock available.', 'error'); return; }
+  if (user.balance < total) { toast(`Insufficient balance. Needs ₱${total.toFixed(2)}, has ₱${user.balance.toFixed(2)}.`, 'error'); return; }
+
+  confirm_('Confirm Purchase',
+    `Charge ₱${total.toFixed(2)} to ${user.name} for ${qty}× ${prod.name}?`,
+    () => {
+      user.balance -= total;
+      prod.stock -= qty;
+      db.transactions.push({
+        id: db.nextTxnId++,
+        userId: uid,
+        productId: pid,
+        qty,
+        total,
+        date: new Date().toISOString(),
+      });
+      saveDb();
+      document.getElementById('pur-user').value = '';
+      document.getElementById('pur-product').value = '';
+      document.getElementById('pur-qty').value = 1;
+      renderPurchase();
+      toast(`Purchase complete! ₱${total.toFixed(2)} deducted.`);
+    }
+  );
+}
+
+// ===== REPORTS =====
+function renderReports() {
+  const today = new Date().toDateString();
+  const todayTxns = db.transactions.filter(t => new Date(t.date).toDateString() === today);
+  const todaySales = todayTxns.reduce((s,t) => s + t.total, 0);
+  document.getElementById('rep-today').textContent = '₱' + todaySales.toFixed(2);
+  document.getElementById('rep-count').textContent = todayTxns.length;
+
+  const recent = [...db.transactions].reverse().slice(0, 20);
+  const tbody = document.getElementById('reports-body');
+  if (!recent.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">No transactions found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = recent.map(t => {
+    const u = db.users.find(u => u.id === t.userId);
+    return `<tr>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--ink3)">#${t.id}</td>
+      <td>${u ? escHtml(u.name) : '—'}</td>
+      <td style="font-weight:600">₱${t.total.toFixed(2)}</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--ink3)">${fmtDate(t.date)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== UTILS =====
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(iso) {
+  return new Date(iso).toLocaleString('en-PH', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+// ===== INIT =====
+loadDb();
+renderDashboard();
+</script>
+</body>
+</html>
