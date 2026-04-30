@@ -10,5 +10,5 @@ instructions for use:
 
 
 2. setting up site
-   - in your file explorer, move the canteensys folder inside C:\xampp\htdocs
-   - open your browser and go to http://localhost/canteensys/index.html
+- in your file explorer, move the canteensys folder inside C:\xampp\htdocs
+- open your browser and go to http://localhost/canteensys/index.html
