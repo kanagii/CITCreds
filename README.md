@@ -8,6 +8,7 @@ instructions for use:
 - on the "file to import" section, upload setup.sql. this file will create the necessary tables along with existing users and products
 - after uploading, scroll down to the bottom and click import
 
+
 2. setting up site
    - in your file explorer, move the canteensys folder inside C:\xampp\htdocs
    - open your browser and go to http://localhost/canteensys/index.html
