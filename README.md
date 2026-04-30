@@ -23,3 +23,4 @@ instructions for use:
   5. [WIP] design polishing
   6. [WIP] user interface for students and teachers
   7. [WIP] implement search feature instead of scrolling down for every user
+  8. update figma(?? do we have to update figma...)
