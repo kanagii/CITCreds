@@ -12,3 +12,13 @@ instructions for use:
 2. setting up site
 - in your file explorer, move the canteensys folder inside C:\xampp\htdocs
 - open your browser and go to http://localhost/canteensys/index.html
+
+
+
+**TODO**
+  1. [WIP] login and user authentication frontend
+  2. [WIP] login and user authentication backend
+  3. [WIP] user balance display
+  4. [WIP] ERD stuff
+  5. [WIP] design polishing
+  6. [WIP] user interface for students and teachers
