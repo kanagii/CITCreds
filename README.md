@@ -22,3 +22,4 @@ instructions for use:
   4. [WIP] ERD stuff
   5. [WIP] design polishing
   6. [WIP] user interface for students and teachers
+  7. [WIP] implement search feature instead of scrolling down for every user
