@@ -16,8 +16,8 @@ instructions for use:
 
 
 **TODO**
-  1. [WIP] login and user authentication frontend
-  2. [WIP] login and user authentication backend
+  1. [WIP] login register user authentication frontend
+  2. [WIP] login register user authentication backend
   3. [WIP] user balance display
   4. [WIP] ERD stuff
   5. [WIP] design polishing
