@@ -27,9 +27,10 @@ Password: password
   3. [DONE] ~~user balance display~~
   4. [WIP] ERD stuff
   5. [WIP] text polishing sa site, like changing the "Canteen System" text to CITCreds and stuff. 
-  6. [DONE] ~~user interface for students and teachers~~
+  6. [DONE] ~~user interface for students~~
   7. [WIP] implement search feature instead of scrolling down for every user when charging users
   8. [WIP] Remove emojis when charging users
   9. [WIP] update figma(?? do we have to update figma...)
   10. [WIP] find bugs and fix
   11. [WIP] Split index.html into different html files (student dashboard, canteen staff dashboard, teacher dashboard)
+  12. [WIP] user interface for teachers
