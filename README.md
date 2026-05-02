@@ -33,4 +33,3 @@ Password: password
   9. [WIP] update figma(?? do we have to update figma...)
   10. [WIP] find bugs and fix
   11. [WIP] Split index.html into different html files (student dashboard, canteen staff dashboard, teacher dashboard)
-  12. [WIP] user interface for teachers
