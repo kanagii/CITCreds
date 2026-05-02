@@ -15,37 +15,224 @@
   --blue: #185FA5; --blue-light: #E6F1FB;
   --amber: #854F0B; --amber-light: #FAEEDA;
   --red: #A32D2D; --red-light: #FCEBEB;
+  --purple: #5B21B6; --purple-light: #EDE9FE;
   --border: rgba(26,25,21,0.12); --border2: rgba(26,25,21,0.06);
   --radius: 12px; --radius-sm: 8px;
   --mono: 'DM Mono', monospace; --display: 'Syne', sans-serif;
 }
 body { font-family: var(--display); background: var(--bg); color: var(--ink); min-height: 100vh; }
 
-/* ── LAYOUT ── */
+/* ══════════════════════════════════════
+   PORTAL CHOOSER (landing)
+══════════════════════════════════════ */
+#portal-chooser {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  padding: 20px;
+}
+.portal-box {
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+.portal-brand {
+  margin-bottom: 36px;
+}
+.portal-brand .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.portal-brand h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.02em;
+}
+.portal-brand p {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin-top: 6px;
+}
+.portal-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.portal-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius);
+  padding: 22px 14px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.portal-card:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+}
+.portal-card.staff:hover  { border-color: var(--accent); background: rgba(216,90,48,0.12); }
+.portal-card.student:hover { border-color: #97C459; background: rgba(151,196,89,0.1); }
+.portal-card.teacher:hover { border-color: #6EA8FF; background: rgba(110,168,255,0.1); }
+.portal-icon {
+  font-size: 26px;
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.07);
+}
+.portal-card.staff .portal-icon   { background: rgba(216,90,48,0.15); }
+.portal-card.student .portal-icon { background: rgba(151,196,89,0.15); }
+.portal-card.teacher .portal-icon { background: rgba(110,168,255,0.15); }
+.portal-card-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+.portal-card-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ══════════════════════════════════════
+   AUTH SCREEN (shared, typed)
+══════════════════════════════════════ */
+#auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  padding: 20px;
+  display: none;
+}
+.auth-box {
+  background: var(--surface);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+}
+.auth-header {
+  background: var(--ink);
+  padding: 24px 32px 20px;
+  text-align: center;
+}
+.auth-header .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: color .15s;
+}
+.auth-header .back-link:hover { color: rgba(255,255,255,0.6); }
+.auth-header .portal-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.auth-header .portal-tag.staff   { background: rgba(216,90,48,0.2); color: #FF8A65; }
+.auth-header .portal-tag.student { background: rgba(151,196,89,0.2); color: #97C459; }
+.auth-header .portal-tag.teacher { background: rgba(110,168,255,0.2); color: #6EA8FF; }
+.auth-header h1 { font-size: 20px; font-weight: 800; color: #fff; }
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.auth-tab {
+  flex: 1; padding: 13px; border: none; background: transparent;
+  font-family: var(--display); font-size: 13px; font-weight: 700;
+  color: var(--ink3); cursor: pointer; transition: all .15s;
+  border-bottom: 2px solid transparent;
+}
+.auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface); }
+/* Hide register tab for staff */
+.auth-tabs.staff-only .auth-tab:last-child { display: none; }
+
+.auth-body { padding: 24px 32px 28px; }
+.auth-form { display: none; flex-direction: column; gap: 14px; }
+.auth-form.active { display: flex; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink2); }
+.field input, .field select {
+  border: 1px solid var(--border); background: var(--bg); color: var(--ink);
+  font-family: var(--display); font-size: 13px; padding: 10px 12px;
+  border-radius: var(--radius-sm); outline: none; transition: border-color .15s, background .15s;
+}
+.field input:focus, .field select:focus { border-color: var(--accent); background: #fff; }
+.field input::placeholder { color: var(--ink3); }
+
+.auth-error {
+  background: var(--red-light); color: var(--red);
+  font-family: var(--mono); font-size: 11px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  display: none;
+}
+.auth-error.show { display: block; }
+
+.btn-auth {
+  padding: 11px; border-radius: var(--radius-sm);
+  background: var(--accent); color: #fff;
+  font-family: var(--display); font-size: 14px; font-weight: 800;
+  border: none; cursor: pointer; transition: background .15s;
+  margin-top: 4px;
+}
+.btn-auth:hover { background: var(--accent-dark); }
+.btn-auth:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ══════════════════════════════════════
+   STAFF APP (hidden until logged in as staff)
+══════════════════════════════════════ */
+#staff-app { display: none; }
 .layout { display: flex; min-height: 100vh; }
 
 /* ── SIDEBAR ── */
-.sidebar {
-  width: 224px; flex-shrink: 0; background: var(--ink);
-  display: flex; flex-direction: column;
-  position: sticky; top: 0; height: 100vh; overflow-y: auto;
-}
+.sidebar { width: 224px; flex-shrink: 0; background: var(--ink); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 .sidebar-logo { padding: 26px 22px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
 .sidebar-logo .tag { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
 .sidebar-logo h1 { font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
 .sidebar-nav { padding: 14px 10px; flex: 1; }
-.nav-btn {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  padding: 9px 12px; border: none; background: transparent;
-  color: rgba(255,255,255,0.45); font-family: var(--display);
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  border-radius: var(--radius-sm); transition: all .15s; text-align: left; margin-bottom: 2px;
-}
+.nav-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 12px; border: none; background: transparent; color: rgba(255,255,255,0.45); font-family: var(--display); font-size: 13px; font-weight: 600; cursor: pointer; border-radius: var(--radius-sm); transition: all .15s; text-align: left; margin-bottom: 2px; }
 .nav-btn .icon { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; background: rgba(255,255,255,0.07); flex-shrink: 0; }
 .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.07); }
 .nav-btn.active { color: #fff; background: var(--accent); }
 .nav-btn.active .icon { background: rgba(255,255,255,0.2); }
-.sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.25); line-height: 1.6; }
+.sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.25); line-height: 1.8; }
+.sidebar-user { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; margin-bottom: 2px; }
+.btn-logout { display: flex; align-items: center; gap: 6px; width: 100%; padding: 8px 12px; margin-top: 8px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: rgba(255,255,255,0.4); font-family: var(--display); font-size: 12px; font-weight: 600; cursor: pointer; border-radius: var(--radius-sm); transition: all .15s; }
+.btn-logout:hover { background: rgba(216,90,48,0.2); color: #F09595; border-color: rgba(216,90,48,0.3); }
 
 /* ── MAIN ── */
 .main { flex: 1; padding: 34px 38px; min-width: 0; }
@@ -53,28 +240,23 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
 .page.active { display: block; animation: fadeIn .18s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-/* ── PAGE HEADER ── */
 .page-header { margin-bottom: 26px; padding-bottom: 18px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .page-header h2 { font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
 .page-header .sub { font-family: var(--mono); font-size: 11px; color: var(--ink3); margin-top: 3px; }
 
-/* ── STAT CARDS ── */
 .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 26px; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
 .stat-card .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); margin-bottom: 7px; }
 .stat-card .stat-val { font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
 .stat-card .stat-val.accent { color: var(--accent); }
-.stat-card .stat-val.green { color: var(--green); }
-.stat-card .stat-val.blue { color: var(--blue); }
-.stat-card .stat-val.red { color: var(--red); }
+.stat-card .stat-val.green  { color: var(--green); }
+.stat-card .stat-val.blue   { color: var(--blue); }
 
-/* ── PANEL ── */
 .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 22px; }
 .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .panel h3 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
 .panel h3::before { content: ''; display: block; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
 
-/* ── TABLE ── */
 .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .table-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .table-wrap thead { background: var(--surface2); }
@@ -84,22 +266,10 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
 .table-wrap tbody tr:hover td { background: #faf8f4; }
 .mono-id { font-family: var(--mono); font-size: 11px; color: var(--ink3); }
 
-/* ── FORMS ── */
 .form-grid { display: grid; gap: 14px; }
 .cols-2 { grid-template-columns: 1fr 1fr; }
 .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
-.field { display: flex; flex-direction: column; gap: 5px; }
-.field label { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink2); }
-.field input, .field select {
-  border: 1px solid var(--border); background: var(--bg); color: var(--ink);
-  font-family: var(--display); font-size: 13px; padding: 8px 11px;
-  border-radius: var(--radius-sm); outline: none; transition: border-color .15s, background .15s;
-}
-.field input:focus, .field select:focus { border-color: var(--accent); background: #fff; }
-.field input::placeholder { color: var(--ink3); }
 
-/* ── BUTTONS ── */
 .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); font-family: var(--display); font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all .15s; }
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 .btn-primary { background: var(--accent); color: #fff; }
@@ -111,21 +281,17 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
 .btn-danger-soft:hover { background: #f7c1c1; }
 .btn-green-soft { background: var(--green-light); color: var(--green); }
 .btn-green-soft:hover { background: #c0dd97; }
-.btn-blue-soft { background: var(--blue-light); color: var(--blue); }
-.btn-blue-soft:hover { background: #b5d4f4; }
 
-/* ── INLINE EDIT ── */
 .edit-input { border: 1px solid transparent; background: transparent; font-family: var(--display); font-size: 13px; color: var(--ink); padding: 4px 7px; border-radius: 6px; width: 100%; outline: none; transition: border-color .15s, background .15s; }
 .edit-input:focus { border-color: var(--accent); background: var(--accent-light); }
 
-/* ── BADGES ── */
 .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: var(--mono); font-size: 10px; font-weight: 500; }
-.badge-green { background: var(--green-light); color: var(--green); }
-.badge-amber { background: var(--amber-light); color: var(--amber); }
-.badge-red   { background: var(--red-light);   color: var(--red); }
-.badge-blue  { background: var(--blue-light);  color: var(--blue); }
+.badge-green  { background: var(--green-light);  color: var(--green); }
+.badge-amber  { background: var(--amber-light);  color: var(--amber); }
+.badge-red    { background: var(--red-light);    color: var(--red); }
+.badge-blue   { background: var(--blue-light);   color: var(--blue); }
+.badge-purple { background: var(--purple-light); color: var(--purple); }
 
-/* ── CART ── */
 .cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface2); margin-bottom: 8px; }
 .cart-item .ci-name { flex: 1; font-size: 13px; font-weight: 600; }
 .cart-item .ci-price { font-family: var(--mono); font-size: 12px; color: var(--ink2); min-width: 70px; text-align: right; }
@@ -135,23 +301,19 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
 .cart-qty span { font-family: var(--mono); font-size: 13px; min-width: 20px; text-align: center; }
 .cart-empty { text-align: center; padding: 28px; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
 
-/* ── ORDER SUMMARY ── */
 .order-summary { background: var(--surface2); border-radius: var(--radius-sm); padding: 14px; font-size: 13px; margin-top: 14px; }
 .order-summary .line { display: flex; justify-content: space-between; padding: 3px 0; color: var(--ink2); font-size: 12px; }
 .order-summary .line.total { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px; font-size: 16px; font-weight: 800; color: var(--ink); }
 .order-summary .line.total .amt { color: var(--accent); }
 
-/* ── TOAST ── */
 #toast { position: fixed; bottom: 26px; right: 26px; background: var(--ink); color: #fff; font-family: var(--mono); font-size: 12px; padding: 11px 18px; border-radius: var(--radius-sm); opacity: 0; transform: translateY(8px); transition: all .22s; pointer-events: none; z-index: 999; max-width: 320px; line-height: 1.5; }
 #toast.show { opacity: 1; transform: translateY(0); }
 #toast.success { border-left: 3px solid #97C459; }
 #toast.error   { border-left: 3px solid #F09595; }
 
-/* ── SPINNER ── */
-.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+.spinner { display: inline-block; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── MODAL ── */
 .modal-bg { display: none; position: fixed; inset: 0; background: rgba(26,25,21,0.55); z-index: 200; align-items: center; justify-content: center; }
 .modal-bg.open { display: flex; }
 .modal { background: var(--surface); border-radius: var(--radius); padding: 26px; width: 420px; max-width: 94vw; max-height: 90vh; overflow-y: auto; }
@@ -159,7 +321,6 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
 .modal p.sub { font-size: 13px; color: var(--ink2); margin-bottom: 20px; line-height: 1.5; }
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 
-/* ── RECEIPT ── */
 .receipt { font-family: var(--mono); font-size: 12px; }
 .receipt .r-header { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed var(--border); margin-bottom: 12px; }
 .receipt .r-header h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
@@ -167,30 +328,266 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
 .receipt .r-row.bold { font-weight: 700; font-size: 13px; border-top: 1px dashed var(--border); margin-top: 6px; padding-top: 8px; }
 .receipt .r-footer { text-align: center; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--ink3); }
 
-/* ── TOP-UP PILL ── */
-.topup-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-.topup-presets button { padding: 4px 12px; border-radius: 20px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); background: var(--surface2); color: var(--ink2); cursor: pointer; transition: all .12s; }
-.topup-presets button:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
-
-/* ── LOADING STATE ── */
 .loading-row td { text-align: center; padding: 36px; color: var(--ink3); font-family: var(--mono); font-size: 12px; }
 
-/* ── RESPONSIVE ── */
+/* ══════════════════════════════════════
+   STUDENT / TEACHER PORTAL
+══════════════════════════════════════ */
+#student-app, #teacher-app { display: none; min-height: 100vh; }
+
+.portal-layout { display: flex; min-height: 100vh; }
+
+/* Portal topbar (instead of sidebar) */
+.portal-topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.topbar-brand .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.topbar-brand h2 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.topbar-user-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+}
+.btn-topbar-logout {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-topbar-logout:hover { background: rgba(216,90,48,0.2); color: #F09595; border-color: rgba(216,90,48,0.3); }
+
+.portal-main {
+  flex: 1;
+  margin-top: 60px;
+  padding: 34px 38px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Portal hero card */
+.portal-hero {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.portal-hero-left h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+}
+.portal-hero-left .hero-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+}
+.portal-balance {
+  text-align: right;
+}
+.portal-balance .bal-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 4px;
+}
+.portal-balance .bal-amount {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.03em;
+}
+.portal-balance .bal-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(255,255,255,0.3);
+  margin-top: 3px;
+}
+
+/* Info cards row */
+.info-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
+.info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+.info-card .ic-label { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+.info-card .ic-val { font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+.ic-val.accent { color: var(--accent); }
+.ic-val.green  { color: var(--green); }
+.ic-val.blue   { color: var(--blue); }
+.ic-val.amber  { color: var(--amber); }
+
+/* Budget widget (students only) */
+.budget-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 22px; }
+.budget-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.budget-panel h3::before { content: ''; display: block; width: 3px; height: 14px; background: var(--green); border-radius: 2px; }
+.budget-bar-wrap { background: var(--surface2); border-radius: 20px; height: 10px; margin: 12px 0; overflow: hidden; }
+.budget-bar { height: 100%; border-radius: 20px; background: var(--green); transition: width .4s; }
+.budget-bar.warn   { background: var(--amber); }
+.budget-bar.danger { background: var(--accent); }
+.budget-set-row { display: flex; gap: 10px; align-items: center; margin-top: 14px; }
+.budget-set-row input { flex: 1; border: 1px solid var(--border); background: var(--bg); color: var(--ink); font-family: var(--display); font-size: 13px; padding: 8px 12px; border-radius: var(--radius-sm); outline: none; transition: border-color .15s; }
+.budget-set-row input:focus { border-color: var(--green); }
+
+/* Recent transactions panel */
+.txn-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.txn-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.txn-panel h3::before { content: ''; display: block; width: 3px; height: 14px; background: var(--blue); border-radius: 2px; }
+.txn-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border2); gap: 12px; }
+.txn-item:last-child { border-bottom: none; }
+.txn-item-left { flex: 1; min-width: 0; }
+.txn-item-items { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.txn-item-date { font-family: var(--mono); font-size: 10px; color: var(--ink3); margin-top: 2px; }
+.txn-item-amount { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+
 @media (max-width: 700px) {
   .sidebar { display: none; }
   .main { padding: 18px 14px; }
-  .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
+  .cols-2, .cols-3 { grid-template-columns: 1fr; }
   .purchase-layout { grid-template-columns: 1fr !important; }
+  .portal-main { padding: 18px 14px; }
+  .portal-topbar { padding: 0 14px; }
+  .portal-cards { grid-template-columns: 1fr; }
+  .portal-hero { flex-direction: column; align-items: flex-start; }
+  .portal-balance { text-align: left; }
 }
 </style>
 </head>
 <body>
+
+<!-- ══════════════════════════════════════════════════
+     PORTAL CHOOSER (landing page)
+══════════════════════════════════════════════════ -->
+<div id="portal-chooser">
+  <div class="portal-box">
+    <div class="portal-brand">
+      <div class="tag">Canteen POS</div>
+      <h1>Canteen System</h1>
+      <p>Select your portal to continue</p>
+    </div>
+    <div class="portal-cards">
+      <div class="portal-card staff" onclick="choosePortal('staff')">
+        <div class="portal-icon">🏪</div>
+        <div class="portal-card-label">Staff</div>
+        <div class="portal-card-sub">Canteen<br>Dashboard</div>
+      </div>
+      <div class="portal-card student" onclick="choosePortal('student')">
+        <div class="portal-icon">🎒</div>
+        <div class="portal-card-label">Student</div>
+        <div class="portal-card-sub">View Balance<br>& Spending</div>
+      </div>
+      <div class="portal-card teacher" onclick="choosePortal('teacher')">
+        <div class="portal-icon">📋</div>
+        <div class="portal-card-label">Teacher</div>
+        <div class="portal-card-sub">View Balance<br>& Spending</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     AUTH SCREEN (shared, typed by portal)
+══════════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-header">
+      <div class="back-link" onclick="goBackToChooser()">← Back</div>
+      <div class="portal-tag" id="auth-portal-tag">Staff</div>
+      <h1 id="auth-portal-title">Staff Portal</h1>
+    </div>
+
+    <div class="auth-tabs" id="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <div class="auth-body">
+      <!-- LOGIN -->
+      <form class="auth-form active" id="form-login" onsubmit="doLogin(event)">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="l-name" placeholder="e.g. Ana Reyes" required autocomplete="username">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="l-pass" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <div class="auth-error" id="login-error"></div>
+        <button type="submit" class="btn-auth" id="login-btn">Sign In</button>
+      </form>
+
+      <!-- REGISTER (students & teachers only) -->
+      <form class="auth-form" id="form-register" onsubmit="doRegister(event)">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="r-name" placeholder="e.g. Juan dela Cruz" required>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="r-pass" placeholder="Min. 6 characters" required autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" id="r-pass2" placeholder="Repeat password" required autocomplete="new-password">
+        </div>
+        <div class="auth-error" id="register-error"></div>
+        <button type="submit" class="btn-auth" id="register-btn">Create Account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     STAFF APP
+══════════════════════════════════════════════════ -->
+<div id="staff-app">
 <div class="layout">
 
-<!-- ═══════ SIDEBAR ═══════ -->
+<!-- SIDEBAR -->
 <nav class="sidebar">
   <div class="sidebar-logo">
-    <div class="tag">Canteen POS</div>
+    <div class="tag">Staff Portal</div>
     <h1>Canteen<br>System</h1>
   </div>
   <div class="sidebar-nav">
@@ -211,15 +608,17 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
     </button>
   </div>
   <div class="sidebar-footer">
+    <div class="sidebar-user" id="sb-username">—</div>
     <div id="db-status">⬤ Connecting…</div>
-    <div style="margin-top:3px">canteen_system · localhost</div>
+    <div>canteen_system · localhost</div>
+    <button class="btn-logout" onclick="doLogout()">⎋ Sign Out</button>
   </div>
 </nav>
 
-<!-- ═══════ MAIN ═══════ -->
+<!-- MAIN -->
 <main class="main">
 
-<!-- ───── DASHBOARD ───── -->
+<!-- ── DASHBOARD ── -->
 <div class="page active" id="page-dashboard">
   <div class="page-header">
     <div><h2>Dashboard</h2><div class="sub" id="dash-date">—</div></div>
@@ -235,16 +634,16 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
   <div class="panel">
     <div class="panel-header"><h3>Recent Transactions</h3></div>
     <div class="table-wrap"><table>
-      <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
-      <tbody id="dash-tbody"><tr class="loading-row"><td colspan="5">Loading…</td></tr></tbody>
+      <thead><tr><th>#</th><th>User</th><th>Type</th><th>Amount Charged</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody id="dash-tbody"><tr class="loading-row"><td colspan="6">Loading…</td></tr></tbody>
     </table></div>
   </div>
 </div>
 
-<!-- ───── PRODUCTS ───── -->
+<!-- ── PRODUCTS ── -->
 <div class="page" id="page-products">
   <div class="page-header">
-    <div><h2>Products</h2><div class="sub">Manage your catalog · click any field to edit inline</div></div>
+    <div><h2>Products</h2><div class="sub">Click any field to edit inline</div></div>
     <button class="btn btn-primary" onclick="openModal('modal-add-product')">+ Add Product</button>
   </div>
   <div class="table-wrap"><table>
@@ -253,15 +652,13 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
   </table></div>
 </div>
 
-<!-- ───── PURCHASE ───── -->
+<!-- ── PURCHASE ── -->
 <div class="page" id="page-purchase">
   <div class="page-header">
-    <div><h2>Purchase</h2><div class="sub">Build a cart and process payment</div></div>
+    <div><h2>Purchase</h2><div class="sub">Select customer · build cart · charge to their account</div></div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start" class="purchase-layout">
-
     <div>
-      <!-- User select -->
       <div class="panel">
         <h3 style="margin-bottom:14px">Customer</h3>
         <div class="field">
@@ -270,64 +667,65 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
             <option value="">— choose user —</option>
           </select>
         </div>
-        <div id="user-info-bar" style="display:none;margin-top:10px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);font-size:13px;display:none;align-items:center;justify-content:space-between;">
-          <span style="color:var(--ink2)">Balance</span>
-          <span id="user-bal-show" style="font-family:var(--mono);font-weight:700;color:var(--green)">₱0.00</span>
+        <div id="user-info-bar" style="display:none;margin-top:10px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface2);font-size:13px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="color:var(--ink2)">Current Balance (owed)</span>
+            <span id="user-bal-show" style="font-family:var(--mono);font-weight:700;color:var(--accent)">₱0.00</span>
+          </div>
+          <div id="user-budget-bar-wrap" style="display:none;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;margin-top:8px;">
+              <span style="color:var(--ink2);font-size:12px">Monthly Budget</span>
+              <span id="user-budget-show" style="font-family:var(--mono);font-size:11px;color:var(--ink2)">—</span>
+            </div>
+            <div class="budget-bar-wrap"><div class="budget-bar" id="user-budget-bar" style="width:0%"></div></div>
+          </div>
         </div>
       </div>
-
-      <!-- Add to cart -->
       <div class="panel">
         <h3 style="margin-bottom:14px">Add Items</h3>
         <div class="form-grid cols-3" style="align-items:end">
           <div class="field" style="grid-column:span 2">
             <label>Product</label>
-            <select id="pur-prod">
-              <option value="">— choose product —</option>
-            </select>
+            <select id="pur-prod"><option value="">— choose product —</option></select>
           </div>
           <div class="field">
             <label>Qty</label>
-            <input type="number" id="pur-qty" value="1" min="1" style="max-width:100%">
+            <input type="number" id="pur-qty" value="1" min="1">
           </div>
         </div>
         <button class="btn btn-ghost" style="margin-top:12px;width:100%;justify-content:center" onclick="addToCart()">+ Add to Cart</button>
       </div>
     </div>
-
-    <!-- Cart + summary -->
     <div>
       <div class="panel" style="position:sticky;top:20px">
         <div class="panel-header">
           <h3>Cart</h3>
-          <button class="btn btn-sm btn-ghost" onclick="clearCart()" style="font-size:11px">Clear</button>
+          <button class="btn btn-sm btn-ghost" onclick="clearCart()">Clear</button>
         </div>
         <div id="cart-list"><div class="cart-empty">Cart is empty</div></div>
         <div class="order-summary" id="cart-summary" style="display:none">
           <div class="line"><span>Subtotal</span><span id="cs-sub">₱0.00</span></div>
-          <div class="line total"><span>Total</span><span class="amt" id="cs-total">₱0.00</span></div>
+          <div class="line total"><span>Total to Charge</span><span class="amt" id="cs-total">₱0.00</span></div>
         </div>
-        <button class="btn btn-primary" id="checkout-btn" onclick="checkout()" style="width:100%;margin-top:14px;justify-content:center" disabled>
-          Confirm Purchase
-        </button>
+        <button class="btn btn-primary" id="checkout-btn" onclick="checkout()" style="width:100%;margin-top:14px;justify-content:center" disabled>Confirm &amp; Charge Account</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ───── USERS ───── -->
+<!-- ── USERS ── -->
 <div class="page" id="page-users">
   <div class="page-header">
-    <div><h2>Users</h2><div class="sub">Manage students &amp; teachers · top-up balances</div></div>
+    <div><h2>Users</h2><div class="sub">Manage students &amp; teachers · view account balances</div></div>
     <button class="btn btn-primary" onclick="openModal('modal-add-user')">+ Add User</button>
   </div>
   <div class="table-wrap"><table>
-    <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Balance</th><th>Actions</th></tr></thead>
-    <tbody id="users-tbody"><tr class="loading-row"><td colspan="5">Loading…</td></tr></tbody>
+    <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Balance Owed</th></tr></thead>
+    <tbody id="users-tbody"><tr class="loading-row"><td colspan="4">Loading…</td></tr></tbody>
   </table></div>
 </div>
 
-<!-- ───── REPORTS ───── -->
+<!-- ── REPORTS ── -->
 <div class="page" id="page-reports">
   <div class="page-header">
     <div><h2>Reports</h2><div class="sub">Sales history &amp; daily summary</div></div>
@@ -340,16 +738,135 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
   <div class="panel">
     <div class="panel-header"><h3>Last 50 Transactions</h3></div>
     <div class="table-wrap"><table>
-      <thead><tr><th>#</th><th>User</th><th>Amount</th><th>Date</th></tr></thead>
-      <tbody id="rep-tbody"><tr class="loading-row"><td colspan="4">Loading…</td></tr></tbody>
+      <thead><tr><th>#</th><th>User</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead>
+      <tbody id="rep-tbody"><tr class="loading-row"><td colspan="5">Loading…</td></tr></tbody>
     </table></div>
   </div>
 </div>
 
 </main>
 </div>
+</div><!-- /#staff-app -->
 
-<!-- ═══════ MODALS ═══════ -->
+<!-- ══════════════════════════════════════════════════
+     STUDENT PORTAL
+══════════════════════════════════════════════════ -->
+<div id="student-app">
+  <div class="portal-topbar">
+    <div class="topbar-brand">
+      <div class="tag">Student</div>
+      <h2>Canteen Portal</h2>
+    </div>
+    <div class="topbar-user">
+      <span class="topbar-user-name" id="st-topbar-name">—</span>
+      <button class="btn-topbar-logout" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+  <div class="portal-main">
+
+    <!-- Hero: balance -->
+    <div class="portal-hero">
+      <div class="portal-hero-left">
+        <h2 id="st-hero-name">Hello!</h2>
+        <div class="hero-sub">Student Account · Canteen Charge Summary</div>
+      </div>
+      <div class="portal-balance">
+        <div class="bal-label">Total Balance Owed</div>
+        <div class="bal-amount" id="st-hero-balance">₱0.00</div>
+        <div class="bal-note">Will be added to tuition billing</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="ic-label">Spent This Month</div>
+        <div class="ic-val accent" id="st-spent">—</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Monthly Budget</div>
+        <div class="ic-val green" id="st-budget-display">No limit</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Budget Remaining</div>
+        <div class="ic-val blue" id="st-budget-rem">—</div>
+      </div>
+    </div>
+
+    <!-- Budget setter -->
+    <div class="budget-panel">
+      <h3>Monthly Budget Limit</h3>
+      <div style="font-size:13px;color:var(--ink2);margin-bottom:8px;" id="st-budget-text">No budget limit set. Set one to track your canteen spending.</div>
+      <div class="budget-bar-wrap"><div class="budget-bar" id="st-budget-bar" style="width:0%"></div></div>
+      <div class="budget-set-row">
+        <input type="number" id="budget-input" placeholder="e.g. 500" min="0" step="0.01">
+        <button class="btn btn-green-soft" onclick="saveBudget()">Set Limit</button>
+        <button class="btn btn-ghost btn-sm" onclick="saveBudget(true)">Remove</button>
+      </div>
+    </div>
+
+    <!-- Recent transactions -->
+    <div class="txn-panel">
+      <h3>Recent Transactions</h3>
+      <div id="st-txn-list"><div style="text-align:center;padding:24px;font-family:var(--mono);font-size:12px;color:var(--ink3)">Loading…</div></div>
+    </div>
+
+  </div>
+</div><!-- /#student-app -->
+
+<!-- ══════════════════════════════════════════════════
+     TEACHER PORTAL
+══════════════════════════════════════════════════ -->
+<div id="teacher-app">
+  <div class="portal-topbar">
+    <div class="topbar-brand">
+      <div class="tag">Teacher</div>
+      <h2>Canteen Portal</h2>
+    </div>
+    <div class="topbar-user">
+      <span class="topbar-user-name" id="tc-topbar-name">—</span>
+      <button class="btn-topbar-logout" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+  <div class="portal-main">
+
+    <!-- Hero: balance -->
+    <div class="portal-hero">
+      <div class="portal-hero-left">
+        <h2 id="tc-hero-name">Hello!</h2>
+        <div class="hero-sub">Teacher Account · Canteen Charge Summary</div>
+      </div>
+      <div class="portal-balance">
+        <div class="bal-label">Total Balance Owed</div>
+        <div class="bal-amount" id="tc-hero-balance">₱0.00</div>
+        <div class="bal-note">Will be deducted from salary</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="ic-label">Spent This Month</div>
+        <div class="ic-val accent" id="tc-spent">—</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Total Owed</div>
+        <div class="ic-val blue" id="tc-balance">—</div>
+      </div>
+    </div>
+
+    <!-- Recent transactions -->
+    <div class="txn-panel">
+      <h3>Recent Transactions</h3>
+      <div id="tc-txn-list"><div style="text-align:center;padding:24px;font-family:var(--mono);font-size:12px;color:var(--ink3)">Loading…</div></div>
+    </div>
+
+  </div>
+</div><!-- /#teacher-app -->
+
+<!-- ══════════════════════════════════════════════════
+     MODALS (shared)
+══════════════════════════════════════════════════ -->
 
 <!-- Add Product -->
 <div class="modal-bg" id="modal-add-product">
@@ -372,7 +889,7 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
 <div class="modal-bg" id="modal-add-user">
   <div class="modal">
     <h3>Add User</h3>
-    <p class="sub">Create a new student or teacher account.</p>
+    <p class="sub">Account starts with ₱0.00 balance (amount owed).</p>
     <div class="form-grid cols-2" style="margin-bottom:14px">
       <div class="field" style="grid-column:span 2"><label>Full Name</label><input type="text" id="nu-name" placeholder="e.g. Juan dela Cruz"></div>
       <div class="field">
@@ -380,9 +897,10 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
         <select id="nu-type">
           <option value="student">Student</option>
           <option value="teacher">Teacher</option>
+          <option value="staff">Staff</option>
         </select>
       </div>
-      <div class="field"><label>Initial Balance (₱)</label><input type="number" id="nu-balance" min="0" step="0.01" value="0"></div>
+      <div class="field"><label>Password</label><input type="password" id="nu-pass" placeholder="Min. 6 characters"></div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-add-user')">Cancel</button>
@@ -391,31 +909,7 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
   </div>
 </div>
 
-<!-- Top-up -->
-<div class="modal-bg" id="modal-topup">
-  <div class="modal">
-    <h3>Top-Up Balance</h3>
-    <p class="sub" id="topup-name-label">Add funds to this account.</p>
-    <input type="hidden" id="topup-uid">
-    <div class="field" style="margin-bottom:10px">
-      <label>Amount (₱)</label>
-      <input type="number" id="topup-amount" min="1" step="0.01" placeholder="0.00">
-    </div>
-    <div class="topup-presets">
-      <button onclick="setTopup(20)">₱20</button>
-      <button onclick="setTopup(50)">₱50</button>
-      <button onclick="setTopup(100)">₱100</button>
-      <button onclick="setTopup(200)">₱200</button>
-      <button onclick="setTopup(500)">₱500</button>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-topup')">Cancel</button>
-      <button class="btn btn-green-soft" onclick="doTopup()">Add Funds</button>
-    </div>
-  </div>
-</div>
-
-<!-- Confirm generic -->
+<!-- Confirm -->
 <div class="modal-bg" id="modal-confirm">
   <div class="modal">
     <h3 id="mc-title">Confirm</h3>
@@ -430,8 +924,8 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
 <!-- Receipt -->
 <div class="modal-bg" id="modal-receipt">
   <div class="modal">
-    <h3>Purchase Complete</h3>
-    <p class="sub">Transaction processed successfully.</p>
+    <h3>Transaction Complete</h3>
+    <p class="sub">Amount has been charged to the user's account.</p>
     <div class="receipt" id="receipt-body"></div>
     <div class="modal-actions">
       <button class="btn btn-primary" onclick="closeModal('modal-receipt');clearCart()">Done</button>
@@ -439,31 +933,21 @@ body { font-family: var(--display); background: var(--bg); color: var(--ink); mi
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════
-//  CONFIG — point this at your server folder
-// ═══════════════════════════════════════════════
 const API = 'api.php';
 
-// ═══════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════
-let products = [];
-let users    = [];
-let cart     = []; // [{ product, qty }]
+// ── state ──────────────────────────────────────────
+let products = [], users = [], cart = [];
+let currentUser = null;
+let currentPortal = null; // 'staff' | 'student' | 'teacher'
 
-// ═══════════════════════════════════════════════
-//  API HELPERS
-// ═══════════════════════════════════════════════
+// ── api helpers ────────────────────────────────────
 async function get(action) {
   const r = await fetch(`${API}?action=${action}`);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
-
 async function post(action, data = {}) {
   const fd = new FormData();
   fd.append('action', action);
@@ -472,16 +956,196 @@ async function post(action, data = {}) {
   return r.json();
 }
 
-// ═══════════════════════════════════════════════
-//  NAVIGATION
-// ═══════════════════════════════════════════════
-const loaders = {
-  dashboard: loadDashboard,
-  products:  loadProducts,
-  purchase:  loadPurchasePage,
-  users:     loadUsers,
-  reports:   loadReports,
-};
+// ── toast ──────────────────────────────────────────
+let _tt;
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = type; t.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── modals ─────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function confirm_(title, body, cb, label = 'Confirm') {
+  document.getElementById('mc-title').textContent = title;
+  document.getElementById('mc-body').textContent  = body;
+  document.getElementById('mc-ok').textContent    = label;
+  document.getElementById('mc-ok').onclick = () => { closeModal('modal-confirm'); cb(); };
+  openModal('modal-confirm');
+}
+
+// ── utils ──────────────────────────────────────────
+const peso = n => '₱' + parseFloat(n || 0).toFixed(2);
+const esc  = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function fmtDate(s) { return new Date(s).toLocaleString('en-PH', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }); }
+function stockBadge(s) {
+  s = parseInt(s);
+  if (s <= 0) return `<span class="badge badge-red">Out of stock</span>`;
+  if (s <= 5) return `<span class="badge badge-amber">Low · ${s}</span>`;
+  return `<span class="badge badge-green">In stock · ${s}</span>`;
+}
+function typeBadge(type) {
+  if (type === 'teacher') return `<span class="badge badge-blue">teacher</span>`;
+  if (type === 'staff')   return `<span class="badge badge-purple">staff</span>`;
+  return `<span class="badge badge-green">student</span>`;
+}
+function setDbStatus(ok) {
+  const el = document.getElementById('db-status');
+  if (!el) return;
+  el.textContent = ok ? '⬤ Connected' : '⬤ Offline';
+  el.style.color  = ok ? 'rgba(151,196,89,0.8)' : 'rgba(240,149,149,0.8)';
+}
+
+// ════════════════════════════════════════
+//  PORTAL CHOOSER
+// ════════════════════════════════════════
+function choosePortal(type) {
+  currentPortal = type;
+  document.getElementById('portal-chooser').style.display = 'none';
+
+  const tag   = document.getElementById('auth-portal-tag');
+  const title = document.getElementById('auth-portal-title');
+  const tabs  = document.getElementById('auth-tabs');
+
+  tag.className = 'portal-tag ' + type;
+
+  if (type === 'staff') {
+    tag.textContent   = 'Staff';
+    title.textContent = 'Staff Portal';
+    tabs.classList.add('staff-only');
+    // Force login tab only
+    switchTab('login');
+  } else if (type === 'student') {
+    tag.textContent   = 'Student';
+    title.textContent = 'Student Portal';
+    tabs.classList.remove('staff-only');
+  } else {
+    tag.textContent   = 'Teacher';
+    title.textContent = 'Teacher Portal';
+    tabs.classList.remove('staff-only');
+  }
+
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('l-name').value = '';
+  document.getElementById('l-pass').value = '';
+  switchTab('login');
+}
+
+function goBackToChooser() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('portal-chooser').style.display = 'flex';
+  currentPortal = null;
+}
+
+// ════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+  const tabs = document.querySelectorAll('.auth-tab');
+  if (tab === 'login') tabs[0].classList.add('active');
+  else tabs[1].classList.add('active');
+  document.getElementById(`form-${tab}`).classList.add('active');
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('register-error').classList.remove('show');
+}
+
+function showAuthError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const btn  = document.getElementById('login-btn');
+  const name = document.getElementById('l-name').value.trim();
+  const pass = document.getElementById('l-pass').value;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Signing in…';
+  document.getElementById('login-error').classList.remove('show');
+
+  const r = await post('login', { name, password: pass });
+  btn.disabled = false; btn.textContent = 'Sign In';
+
+  if (!r.ok) { showAuthError('login-error', r.error); return; }
+
+  // Validate that user is logging into correct portal
+  if (currentPortal === 'staff' && r.user_type !== 'staff') {
+    showAuthError('login-error', 'This account does not have staff access. Please use the correct portal.');
+    await post('logout');
+    return;
+  }
+  if (currentPortal === 'student' && r.user_type !== 'student') {
+    showAuthError('login-error', 'This is not a student account. Please use the correct portal.');
+    await post('logout');
+    return;
+  }
+  if (currentPortal === 'teacher' && r.user_type !== 'teacher') {
+    showAuthError('login-error', 'This is not a teacher account. Please use the correct portal.');
+    await post('logout');
+    return;
+  }
+
+  currentUser = r;
+  enterApp();
+}
+
+async function doRegister(e) {
+  e.preventDefault();
+  const btn   = document.getElementById('register-btn');
+  const name  = document.getElementById('r-name').value.trim();
+  const pass  = document.getElementById('r-pass').value;
+  const pass2 = document.getElementById('r-pass2').value;
+
+  document.getElementById('register-error').classList.remove('show');
+  if (pass !== pass2) { showAuthError('register-error', 'Passwords do not match.'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating…';
+
+  const user_type = currentPortal; // 'student' or 'teacher'
+  const r = await post('register', { name, user_type, password: pass });
+  btn.disabled = false; btn.textContent = 'Create Account';
+
+  if (r.ok) { currentUser = r; enterApp(); }
+  else showAuthError('register-error', r.error);
+}
+
+async function doLogout() {
+  await post('logout');
+  currentUser = null;
+  document.getElementById('staff-app').style.display   = 'none';
+  document.getElementById('student-app').style.display = 'none';
+  document.getElementById('teacher-app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('portal-chooser').style.display = 'flex';
+  currentPortal = null;
+}
+
+function enterApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+
+  const type = currentUser.user_type;
+  if (type === 'staff') {
+    document.getElementById('staff-app').style.display = 'block';
+    document.getElementById('sb-username').textContent = currentUser.name + ' · Staff';
+    nav('dashboard');
+  } else if (type === 'student') {
+    document.getElementById('student-app').style.display = 'block';
+    loadStudentPortal();
+  } else if (type === 'teacher') {
+    document.getElementById('teacher-app').style.display = 'block';
+    loadTeacherPortal();
+  }
+}
+
+// ════════════════════════════════════════
+//  STAFF NAVIGATION
+// ════════════════════════════════════════
+const loaders = { dashboard: loadDashboard, products: loadProducts, purchase: loadPurchasePage, users: loadUsers, reports: loadReports };
 
 function nav(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -491,51 +1155,9 @@ function nav(id) {
   if (loaders[id]) loaders[id]();
 }
 
-// ═══════════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════════
-let _tt;
-function toast(msg, type = 'success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = type;
-  t.classList.add('show');
-  clearTimeout(_tt);
-  _tt = setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-// ═══════════════════════════════════════════════
-//  MODALS
-// ═══════════════════════════════════════════════
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function confirm_(title, body, cb, btnLabel = 'Confirm') {
-  document.getElementById('mc-title').textContent = title;
-  document.getElementById('mc-body').textContent  = body;
-  document.getElementById('mc-ok').textContent    = btnLabel;
-  document.getElementById('mc-ok').onclick = () => { closeModal('modal-confirm'); cb(); };
-  openModal('modal-confirm');
-}
-
-// ═══════════════════════════════════════════════
-//  UTILS
-// ═══════════════════════════════════════════════
-const peso = n => '₱' + parseFloat(n).toFixed(2);
-const esc  = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-function fmtDate(s) {
-  return new Date(s).toLocaleString('en-PH', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-}
-function stockBadge(s) {
-  s = parseInt(s);
-  if (s <= 0)  return `<span class="badge badge-red">Out of stock</span>`;
-  if (s <= 5)  return `<span class="badge badge-amber">Low · ${s}</span>`;
-  return `<span class="badge badge-green">In stock · ${s}</span>`;
-}
-
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 //  DASHBOARD
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 async function loadDashboard() {
   document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
   try {
@@ -545,31 +1167,25 @@ async function loadDashboard() {
     document.getElementById('d-prods').textContent = d.product_count;
     document.getElementById('d-users').textContent = d.user_count;
     const low = d.low_stock;
-    document.getElementById('d-low').textContent   = low;
-    document.getElementById('d-low').style.color   = low > 0 ? 'var(--accent)' : 'var(--ink)';
-
+    document.getElementById('d-low').textContent = low;
+    document.getElementById('d-low').style.color = low > 0 ? 'var(--accent)' : 'var(--ink)';
     const tbody = document.getElementById('dash-tbody');
-    if (!d.recent.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="5">No transactions yet</td></tr>'; return; }
+    if (!d.recent.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="6">No transactions yet</td></tr>'; return; }
     tbody.innerHTML = d.recent.map(t => `<tr>
       <td class="mono-id">#${t.transaction_id}</td>
       <td>${esc(t.name)}</td>
-      <td style="font-weight:700">${peso(t.total_amount)}</td>
+      <td>${typeBadge(t.user_type)}</td>
+      <td style="font-weight:700;color:var(--accent)">${peso(t.total_amount)}</td>
       <td class="mono-id">${fmtDate(t.transaction_date)}</td>
-      <td><span class="badge badge-green">Completed</span></td>
+      <td><span class="badge badge-green">Charged</span></td>
     </tr>`).join('');
     setDbStatus(true);
   } catch(e) { setDbStatus(false); }
 }
 
-function setDbStatus(ok) {
-  const el = document.getElementById('db-status');
-  el.textContent = ok ? '⬤ Connected' : '⬤ Offline';
-  el.style.color  = ok ? 'rgba(151,196,89,0.8)' : 'rgba(240,149,149,0.8)';
-}
-
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 //  PRODUCTS
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 async function loadProducts() {
   try {
     const d = await get('products');
@@ -582,7 +1198,7 @@ async function loadProducts() {
 function renderProducts() {
   const tbody = document.getElementById('prod-tbody');
   if (!products.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="6">No products found</td></tr>'; return; }
-  tbody.innerHTML = products.map(p => `<tr data-pid="${p.product_id}">
+  tbody.innerHTML = products.map(p => `<tr>
     <td class="mono-id">${p.product_id}</td>
     <td><input class="edit-input" data-id="${p.product_id}" data-f="name"  value="${esc(p.name)}"  onblur="saveProductField(this)"></td>
     <td><input class="edit-input" data-id="${p.product_id}" data-f="price" value="${parseFloat(p.price).toFixed(2)}" type="number" step="0.01" onblur="saveProductField(this)" style="max-width:90px"></td>
@@ -596,10 +1212,11 @@ async function saveProductField(input) {
   const id = input.dataset.id;
   const p  = products.find(x => x.product_id == id);
   if (!p) return;
-  // build updated object
   const updated = { ...p };
-  updated[input.dataset.f === 'name' ? 'name' : input.dataset.f === 'price' ? 'price' : 'stock'] = input.value;
-  const r = await post('product_update', { id: p.product_id, name: updated.name, price: parseFloat(updated.price) || p.price, stock: parseInt(updated.stock) ?? p.stock });
+  if (input.dataset.f === 'name')  updated.name  = input.value.trim() || p.name;
+  if (input.dataset.f === 'price') updated.price = parseFloat(input.value) || p.price;
+  if (input.dataset.f === 'stock') updated.stock = parseInt(input.value) ?? p.stock;
+  const r = await post('product_update', { id: p.product_id, name: updated.name, price: updated.price, stock: updated.stock });
   if (r.ok) { toast('Saved.'); await loadProducts(); }
   else toast(r.error, 'error');
 }
@@ -622,67 +1239,50 @@ function deleteProduct(id, name) {
   }, 'Delete');
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 //  USERS
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 async function loadUsers() {
-  try {
-    const d = await get('users');
-    users = d.users;
-    renderUsers();
-  } catch(e) { toast('Could not load users.', 'error'); }
+  try { const d = await get('users'); users = d.users; renderUsers(); }
+  catch(e) { toast('Could not load users.', 'error'); }
 }
 
 function renderUsers() {
   const tbody = document.getElementById('users-tbody');
-  if (!users.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="5">No users found</td></tr>'; return; }
+  if (!users.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="4">No users found</td></tr>'; return; }
   tbody.innerHTML = users.map(u => `<tr>
     <td class="mono-id">${u.user_id}</td>
     <td style="font-weight:600">${esc(u.name)}</td>
-    <td><span class="badge ${u.user_type==='teacher'?'badge-blue':'badge-green'}">${u.user_type}</span></td>
-    <td style="font-family:var(--mono);font-weight:700;color:${parseFloat(u.balance)<50?'var(--red)':'var(--green)'}">${peso(u.balance)}</td>
-    <td><button class="btn btn-sm btn-green-soft" onclick="openTopup(${u.user_id},'${esc(u.name)}',${u.balance})">Top-Up</button></td>
+    <td>${typeBadge(u.user_type)}</td>
+    <td style="font-family:var(--mono);font-weight:700;color:${parseFloat(u.balance)>0?'var(--accent)':'var(--green)'}">${peso(u.balance)}</td>
   </tr>`).join('');
 }
 
-function openTopup(uid, name, bal) {
-  document.getElementById('topup-uid').value      = uid;
-  document.getElementById('topup-name-label').textContent = `Adding funds to ${name} · Current: ${peso(bal)}`;
-  document.getElementById('topup-amount').value   = '';
-  openModal('modal-topup');
-}
-function setTopup(v) { document.getElementById('topup-amount').value = v; }
-
-async function doTopup() {
-  const uid = document.getElementById('topup-uid').value;
-  const amt = parseFloat(document.getElementById('topup-amount').value);
-  if (!amt || amt <= 0) { toast('Enter a valid amount.', 'error'); return; }
-  const r = await post('user_topup', { user_id: uid, amount: amt });
+async function createUser() {
+  const name = document.getElementById('nu-name').value.trim();
+  const type = document.getElementById('nu-type').value;
+  const pass = document.getElementById('nu-pass').value;
+  if (!name)           { toast('Name is required.', 'error'); return; }
+  if (pass.length < 6) { toast('Password must be at least 6 characters.', 'error'); return; }
+  const r = await post('user_create', { name, user_type: type, password: pass });
   if (r.ok) {
-    toast(`Balance updated! New balance: ${peso(r.new_balance)}`);
-    closeModal('modal-topup');
+    toast('User created!'); closeModal('modal-add-user');
+    document.getElementById('nu-name').value = '';
+    document.getElementById('nu-pass').value = '';
     await loadUsers();
   } else toast(r.error, 'error');
 }
 
-async function createUser() {
-  const name    = document.getElementById('nu-name').value.trim();
-  const type    = document.getElementById('nu-type').value;
-  const balance = parseFloat(document.getElementById('nu-balance').value) || 0;
-  if (!name) { toast('Name is required.', 'error'); return; }
-  const r = await post('user_create', { name, user_type: type, balance });
-  if (r.ok) { toast('User created!'); closeModal('modal-add-user'); document.getElementById('nu-name').value = ''; await loadUsers(); }
-  else toast(r.error, 'error');
-}
-
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 //  PURCHASE
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
+let purchaseUsers = []; // separate from global users, stores profile info for purchase page
+
 async function loadPurchasePage() {
   try {
     const [pd, ud] = await Promise.all([get('products'), get('users')]);
-    products = pd.products;
-    users    = ud.users;
+    products = pd.products; users = ud.users;
+    purchaseUsers = ud.users.filter(u => u.user_type !== 'staff');
     populatePurchaseDropdowns();
   } catch(e) { toast('Could not load purchase data.', 'error'); }
 }
@@ -691,9 +1291,11 @@ function populatePurchaseDropdowns() {
   const uSel = document.getElementById('pur-user');
   const cur  = uSel.value;
   uSel.innerHTML = '<option value="">— choose user —</option>' +
-    users.map(u => `<option value="${u.user_id}" ${u.user_id==cur?'selected':''}>${esc(u.name)} (${peso(u.balance)})</option>`).join('');
+    purchaseUsers.map(u => {
+      const typeLabel = u.user_type === 'teacher' ? '👩‍🏫' : '🎒';
+      return `<option value="${u.user_id}" ${u.user_id==cur?'selected':''}>${typeLabel} ${esc(u.name)} · Owes ${peso(u.balance)}</option>`;
+    }).join('');
   if (cur) onUserChange();
-
   const pSel = document.getElementById('pur-prod');
   pSel.innerHTML = '<option value="">— choose product —</option>' +
     products.filter(p => parseInt(p.stock)>0).map(p =>
@@ -702,14 +1304,13 @@ function populatePurchaseDropdowns() {
 
 function onUserChange() {
   const uid  = parseInt(document.getElementById('pur-user').value);
-  const user = users.find(u => u.user_id == uid);
+  const user = purchaseUsers.find(u => u.user_id == uid);
   const bar  = document.getElementById('user-info-bar');
-  if (user) {
-    bar.style.display = 'flex';
-    document.getElementById('user-bal-show').textContent = peso(user.balance);
-  } else {
-    bar.style.display = 'none';
-  }
+  if (!user) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  document.getElementById('user-bal-show').textContent = peso(user.balance);
+  // Budget bar is not fetched here for simplicity; it's on the student's own portal
+  document.getElementById('user-budget-bar-wrap').style.display = 'none';
 }
 
 function addToCart() {
@@ -718,48 +1319,32 @@ function addToCart() {
   if (!pid) { toast('Select a product first.', 'error'); return; }
   const prod = products.find(p => p.product_id == pid);
   if (!prod) return;
-
   const existing = cart.find(c => c.product.product_id == pid);
   const newQty   = (existing ? existing.qty : 0) + qty;
   if (newQty > parseInt(prod.stock)) { toast(`Only ${prod.stock} in stock.`, 'error'); return; }
-
   if (existing) existing.qty = newQty;
-  else          cart.push({ product: prod, qty });
-
+  else cart.push({ product: prod, qty });
   document.getElementById('pur-qty').value = 1;
   renderCart();
   toast(`${prod.name} added to cart.`);
 }
 
-function removeFromCart(pid) {
-  cart = cart.filter(c => c.product.product_id != pid);
-  renderCart();
-}
-
+function removeFromCart(pid) { cart = cart.filter(c => c.product.product_id != pid); renderCart(); }
 function changeQty(pid, delta) {
   const item = cart.find(c => c.product.product_id == pid);
   if (!item) return;
   const newQty = item.qty + delta;
   if (newQty <= 0) { removeFromCart(pid); return; }
   if (newQty > parseInt(item.product.stock)) { toast('Not enough stock.', 'error'); return; }
-  item.qty = newQty;
-  renderCart();
+  item.qty = newQty; renderCart();
 }
-
 function clearCart() { cart = []; renderCart(); }
 
 function renderCart() {
   const list    = document.getElementById('cart-list');
   const summary = document.getElementById('cart-summary');
   const btn     = document.getElementById('checkout-btn');
-
-  if (!cart.length) {
-    list.innerHTML = '<div class="cart-empty">Cart is empty</div>';
-    summary.style.display = 'none';
-    btn.disabled = true;
-    return;
-  }
-
+  if (!cart.length) { list.innerHTML = '<div class="cart-empty">Cart is empty</div>'; summary.style.display = 'none'; btn.disabled = true; return; }
   list.innerHTML = cart.map(c => `
     <div class="cart-item">
       <div class="ci-name">${esc(c.product.name)}</div>
@@ -771,87 +1356,170 @@ function renderCart() {
       <div class="ci-price">${peso(c.product.price * c.qty)}</div>
       <button onclick="removeFromCart(${c.product.product_id})" style="background:transparent;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:2px 4px;">×</button>
     </div>`).join('');
-
   const subtotal = cart.reduce((s,c) => s + c.product.price * c.qty, 0);
   document.getElementById('cs-sub').textContent   = peso(subtotal);
   document.getElementById('cs-total').textContent = peso(subtotal);
-  summary.style.display = 'block';
-  btn.disabled = false;
+  summary.style.display = 'block'; btn.disabled = false;
 }
 
 async function checkout() {
   const uid = parseInt(document.getElementById('pur-user').value);
   if (!uid)        { toast('Select a user first.', 'error'); return; }
   if (!cart.length){ toast('Cart is empty.', 'error'); return; }
-
-  const user  = users.find(u => u.user_id == uid);
+  const user  = purchaseUsers.find(u => u.user_id == uid);
   const total = cart.reduce((s,c) => s + c.product.price * c.qty, 0);
   const items = cart.map(c => ({ product_id: c.product.product_id, quantity: c.qty }));
-
-  confirm_(`Confirm Purchase`,
-    `Charge ${peso(total)} to ${user?.name || 'this user'}?`,
+  confirm_('Confirm Transaction',
+    `Charge ${peso(total)} to ${user?.name || 'this user'}? This will be added to their ${user?.user_type === 'teacher' ? 'salary deduction' : 'tuition'}.`,
     async () => {
       const btn = document.getElementById('checkout-btn');
-      btn.innerHTML = '<span class="spinner"></span> Processing…';
-      btn.disabled = true;
-
+      btn.innerHTML = '<span class="spinner"></span> Processing…'; btn.disabled = true;
       const r = await post('purchase', { user_id: uid, items: JSON.stringify(items) });
-
-      btn.innerHTML = 'Confirm Purchase';
-      btn.disabled  = false;
-
-      if (r.ok) {
-        showReceipt(r, user);
-        await loadPurchasePage(); // refresh balances/stock
-      } else {
-        toast(r.error, 'error');
-      }
-    }, 'Confirm'
-  );
+      btn.innerHTML = 'Confirm &amp; Charge Account'; btn.disabled = false;
+      if (r.ok) { showReceipt(r, user); await loadPurchasePage(); }
+      else toast(r.error, 'error');
+    }, 'Charge Account');
 }
 
 function showReceipt(r, user) {
-  const rows = r.items.map(i =>
-    `<div class="r-row"><span>${esc(i.name)} × ${i.qty}</span><span>${peso(i.subtotal)}</span></div>`
-  ).join('');
+  const rows = r.items.map(i => `<div class="r-row"><span>${esc(i.name)} × ${i.qty}</span><span>${peso(i.subtotal)}</span></div>`).join('');
+  const note = user?.user_type === 'teacher' ? 'Deducted from salary' : 'Added to tuition';
   document.getElementById('receipt-body').innerHTML = `
-    <div class="r-header">
-      <h4>Canteen System</h4>
-      <div>Txn #${r.transaction_id} · ${new Date().toLocaleString('en-PH')}</div>
-    </div>
-    <div class="r-row"><span>Customer</span><span>${esc(user?.name||'—')}</span></div>
+    <div class="r-header"><h4>Canteen System</h4><div>Txn #${r.transaction_id} · ${new Date().toLocaleString('en-PH')}</div></div>
+    <div class="r-row"><span>Customer</span><span>${esc(user?.name||'—')} (${user?.user_type||''})</span></div>
     ${rows}
-    <div class="r-row bold"><span>Total Paid</span><span>${peso(r.total)}</span></div>
-    <div class="r-row"><span>Remaining Balance</span><span>${peso(r.new_balance)}</span></div>
-    <div class="r-footer">Thank you!</div>`;
-  closeModal('modal-confirm');
-  openModal('modal-receipt');
+    <div class="r-row bold"><span>Total Charged</span><span>${peso(r.total)}</span></div>
+    <div class="r-row"><span>Total Balance Owed</span><span>${peso(r.new_balance)}</span></div>
+    <div class="r-footer">${note} · Thank you!</div>`;
+  closeModal('modal-confirm'); openModal('modal-receipt');
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 //  REPORTS
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════
 async function loadReports() {
   try {
     const d = await get('reports');
     document.getElementById('r-sales').textContent = peso(d.today_sales);
     document.getElementById('r-count').textContent = d.today_count;
-
     const tbody = document.getElementById('rep-tbody');
-    if (!d.transactions.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="4">No transactions yet</td></tr>'; return; }
+    if (!d.transactions.length) { tbody.innerHTML = '<tr class="loading-row"><td colspan="5">No transactions yet</td></tr>'; return; }
     tbody.innerHTML = d.transactions.map(t => `<tr>
       <td class="mono-id">#${t.transaction_id}</td>
       <td>${esc(t.name)}</td>
+      <td>${typeBadge(t.user_type)}</td>
       <td style="font-weight:700">${peso(t.total_amount)}</td>
       <td class="mono-id">${fmtDate(t.transaction_date)}</td>
     </tr>`).join('');
   } catch(e) { toast('Could not load reports.', 'error'); }
 }
 
-// ═══════════════════════════════════════════════
-//  BOOT
-// ═══════════════════════════════════════════════
-loadDashboard();
+// ════════════════════════════════════════
+//  STUDENT PORTAL
+// ════════════════════════════════════════
+async function loadStudentPortal() {
+  document.getElementById('st-topbar-name').textContent = currentUser.name;
+  document.getElementById('st-hero-name').textContent   = 'Hello, ' + currentUser.name + '!';
+  try {
+    const d = await get('my_profile');
+    const user    = d.user;
+    const spent   = d.spent_30days;
+    const budget  = d.budget;
+    const recent  = d.recent;
+
+    document.getElementById('st-hero-balance').textContent  = peso(user.balance);
+    document.getElementById('st-spent').textContent         = peso(spent);
+
+    if (budget && budget > 0) {
+      document.getElementById('st-budget-display').textContent = peso(budget);
+      const pct = Math.min((spent / budget) * 100, 100);
+      const rem = Math.max(budget - spent, 0);
+      document.getElementById('st-budget-rem').textContent = peso(rem);
+      document.getElementById('budget-input').value = budget;
+
+      const bar = document.getElementById('st-budget-bar');
+      bar.style.width = pct + '%';
+      bar.className   = 'budget-bar' + (pct >= 100 ? ' danger' : pct >= 75 ? ' warn' : '');
+
+      document.getElementById('st-budget-text').textContent =
+        `You've spent ${peso(spent)} of your ${peso(budget)} monthly limit (${pct.toFixed(0)}%).`;
+    } else {
+      document.getElementById('st-budget-display').textContent = 'No limit';
+      document.getElementById('st-budget-rem').textContent = '—';
+      document.getElementById('st-budget-bar').style.width = '0%';
+      document.getElementById('st-budget-text').textContent = 'No budget limit set. Set one to track your canteen spending.';
+    }
+
+    // Render recent transactions
+    const list = document.getElementById('st-txn-list');
+    if (!recent.length) {
+      list.innerHTML = '<div style="text-align:center;padding:24px;font-family:var(--mono);font-size:12px;color:var(--ink3)">No transactions yet</div>';
+    } else {
+      list.innerHTML = recent.map(t => `
+        <div class="txn-item">
+          <div class="txn-item-left">
+            <div class="txn-item-items">${esc(t.items || '—')}</div>
+            <div class="txn-item-date">${fmtDate(t.transaction_date)} · #${t.transaction_id}</div>
+          </div>
+          <div class="txn-item-amount">${peso(t.total_amount)}</div>
+        </div>`).join('');
+    }
+  } catch(e) { toast('Could not load profile data.', 'error'); }
+}
+
+async function saveBudget(remove = false) {
+  const amount = remove ? 0 : parseFloat(document.getElementById('budget-input').value) || 0;
+  const r = await post('set_budget', { amount });
+  if (r.ok) {
+    toast(remove ? 'Budget limit removed.' : `Budget set to ${peso(amount)}.`);
+    await loadStudentPortal();
+  } else toast(r.error, 'error');
+}
+
+// ════════════════════════════════════════
+//  TEACHER PORTAL
+// ════════════════════════════════════════
+async function loadTeacherPortal() {
+  document.getElementById('tc-topbar-name').textContent = currentUser.name;
+  document.getElementById('tc-hero-name').textContent   = 'Hello, ' + currentUser.name + '!';
+  try {
+    const d = await get('my_profile');
+    const user   = d.user;
+    const spent  = d.spent_30days;
+    const recent = d.recent;
+
+    document.getElementById('tc-hero-balance').textContent = peso(user.balance);
+    document.getElementById('tc-spent').textContent        = peso(spent);
+    document.getElementById('tc-balance').textContent      = peso(user.balance);
+
+    const list = document.getElementById('tc-txn-list');
+    if (!recent.length) {
+      list.innerHTML = '<div style="text-align:center;padding:24px;font-family:var(--mono);font-size:12px;color:var(--ink3)">No transactions yet</div>';
+    } else {
+      list.innerHTML = recent.map(t => `
+        <div class="txn-item">
+          <div class="txn-item-left">
+            <div class="txn-item-items">${esc(t.items || '—')}</div>
+            <div class="txn-item-date">${fmtDate(t.transaction_date)} · #${t.transaction_id}</div>
+          </div>
+          <div class="txn-item-amount">${peso(t.total_amount)}</div>
+        </div>`).join('');
+    }
+  } catch(e) { toast('Could not load profile data.', 'error'); }
+}
+
+// ════════════════════════════════════════
+//  BOOT — check existing session
+// ════════════════════════════════════════
+(async () => {
+  const r = await get('me');
+  if (r.logged_in) {
+    currentUser  = r.user;
+    currentPortal = r.user.user_type;
+    enterApp();
+  }
+  // else stay on portal chooser (already visible)
+})();
 </script>
 </body>
 </html>
